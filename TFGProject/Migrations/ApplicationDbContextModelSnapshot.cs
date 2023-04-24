@@ -67,7 +67,7 @@ namespace TFGProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Beneficiarios");
+                    b.ToTable("Beneficiarios", (string)null);
                 });
 
             modelBuilder.Entity("TFGProject.Models.BeneficiariosSiguenEmpresa", b =>
@@ -82,7 +82,7 @@ namespace TFGProject.Migrations
 
                     b.HasIndex("IdEmpresa");
 
-                    b.ToTable("BeneficiariosSiguenEmpresa");
+                    b.ToTable("BeneficiariosSiguenEmpresa", (string)null);
                 });
 
             modelBuilder.Entity("TFGProject.Models.Certificado", b =>
@@ -99,7 +99,7 @@ namespace TFGProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Certificados");
+                    b.ToTable("Certificados", (string)null);
                 });
 
             modelBuilder.Entity("TFGProject.Models.Donacion", b =>
@@ -146,7 +146,7 @@ namespace TFGProject.Migrations
 
                     b.HasIndex("IdEmpresa");
 
-                    b.ToTable("Donaciones");
+                    b.ToTable("Donaciones", (string)null);
                 });
 
             modelBuilder.Entity("TFGProject.Models.Empresa", b =>
@@ -194,7 +194,7 @@ namespace TFGProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Empresas");
+                    b.ToTable("Empresas", (string)null);
                 });
 
             modelBuilder.Entity("TFGProject.Models.EmpresasSiguenBeneficiarios", b =>
@@ -209,7 +209,7 @@ namespace TFGProject.Migrations
 
                     b.HasIndex("IdEmpresa");
 
-                    b.ToTable("EmpresasSiguenBeneficiarios");
+                    b.ToTable("EmpresasSiguenBeneficiarios", (string)null);
                 });
 
             modelBuilder.Entity("TFGProject.Models.Necesita", b =>
@@ -237,7 +237,7 @@ namespace TFGProject.Migrations
 
                     b.HasIndex("IdBeneficiario");
 
-                    b.ToTable("Necesidades");
+                    b.ToTable("Necesidades", (string)null);
                 });
 
             modelBuilder.Entity("TFGProject.Models.Recurso", b =>
@@ -269,7 +269,7 @@ namespace TFGProject.Migrations
 
                     b.HasIndex("IdEmpresa");
 
-                    b.ToTable("Recursos");
+                    b.ToTable("Recursos", (string)null);
                 });
 
             modelBuilder.Entity("TFGProject.Models.BeneficiariosSiguenEmpresa", b =>
