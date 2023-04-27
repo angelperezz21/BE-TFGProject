@@ -22,6 +22,10 @@ namespace TFGProject
 
             modelBuilder.Entity<Beneficiario>().HasKey(b => b.Id);
 
+            modelBuilder.Entity<Empresa>().Property(b => b.Id).ValueGeneratedOnAdd().HasDefaultValue(1);
+
+            modelBuilder.Entity<Beneficiario>().Property(b => b.Id).ValueGeneratedOnAdd().HasDefaultValue(1000);
+
             modelBuilder.Entity<Necesita>().HasKey(b => b.Id);
             modelBuilder.Entity<Necesita>()
                 .HasOne(z => z.Beneficiario).WithMany(z => z.Necesidades).HasForeignKey(b => b.IdBeneficiario);
