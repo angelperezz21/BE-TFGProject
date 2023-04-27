@@ -24,12 +24,12 @@ namespace TFGProject.Controllers
         }
 
 
-        [HttpGet("listaNecesidades")]
-        public async Task<IActionResult> Get()
+        [HttpGet("listaNecesidadesPublicadas")]
+        public async Task<IActionResult> GetListNecesidadesBeneficiario()
         {
             try
             {
-                var listnecesitas = await _necesitaRepository.GetListNecesitas();
+                var listnecesitas = await _necesitaRepository.GetListNecesidadesPublicadas();
 
                 var listnecesitasDto = _mapper.Map<IEnumerable<NecesitaDto>>(listnecesitas);
 
@@ -38,6 +38,26 @@ namespace TFGProject.Controllers
             }
             catch (Exception ex)
             {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        [HttpGet("listaNecesidadesBeneficiario/{id}")]
+        public async Task<IActionResult> GetListaNecesidadesBeneficiario(int id)
+        {
+            try
+            {
+                var listnecesidades = await _necesitaRepository.GetListNecesidadesBeneficiario(id);
+
+                var listnecesidadesDto = _mapper.Map<IEnumerable<NecesitaDto>>(listnecesidades);
+
+                return Ok(listnecesidadesDto);
+
+            }
+            catch (Exception ex)
+            {
+
                 return BadRequest(ex.Message);
             }
 
@@ -104,6 +124,22 @@ namespace TFGProject.Controllers
                 var necesitaItemDto = _mapper.Map<NecesitaDto>(necesita);
 
                 return CreatedAtAction("Get", new { id = necesitaItemDto.Id }, necesitaItemDto);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("cambiarEstado/{id}")]
+        public async Task<IActionResult> CambiarEstado(int id)
+        {
+            try
+            {
+                await _necesitaRepository.UpdateNecesita(id);
+
+                return NoContent();
 
             }
             catch (Exception ex)

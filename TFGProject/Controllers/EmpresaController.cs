@@ -167,7 +167,7 @@ namespace TFGProject.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Post(EmpresaDto empresaDto)
+        public async Task<IActionResult> Post([FromBody] EmpresaDto empresaDto)
         {
             try
             {
@@ -177,7 +177,7 @@ namespace TFGProject.Controllers
 
                 var empresaItemDto = _mapper.Map<EmpresaDto>(empresa);
 
-                return CreatedAtAction("Get", new { id = empresaItemDto.Id }, empresaItemDto);
+                return Ok(empresaItemDto);
 
             }
             catch (Exception ex)

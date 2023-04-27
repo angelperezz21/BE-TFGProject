@@ -24,12 +24,32 @@ namespace TFGProject.Controllers
         }
 
 
-        [HttpGet("listaRecursos")]
-        public async Task<IActionResult> Get()
+        [HttpGet("listaRecursosPublicados")]
+        public async Task<IActionResult> GetListRecursosPublicados()
         {
             try
             {
-                var listrecursos = await _recursoRepository.GetListRecursos();
+                var listrecursos = await _recursoRepository.GetListRecursosPublicados();
+
+                var listrecursosDto = _mapper.Map<IEnumerable<RecursoDto>>(listrecursos);
+
+                return Ok(listrecursosDto);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpGet("listaRecursosEmpresa/{id}")]
+        public async Task<IActionResult> GetListaRecursosEmpresa(int id)
+        {
+            try
+            {
+                var listrecursos = await _recursoRepository.GetListRecursosEmpresa(id);
 
                 var listrecursosDto = _mapper.Map<IEnumerable<RecursoDto>>(listrecursos);
 
@@ -44,9 +64,10 @@ namespace TFGProject.Controllers
 
         }
 
-        [Authorize(Roles = "Recurso")]
+
+        [Authorize(Roles = "Empresa")]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetRecurso(int id)
         {
             try
             {
@@ -69,7 +90,7 @@ namespace TFGProject.Controllers
             }
         }
 
-        [Authorize(Roles = "Recurso")]
+        [Authorize(Roles = "Empresa")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -92,7 +113,7 @@ namespace TFGProject.Controllers
             }
         }
 
-        [Authorize(Roles = "Recurso")]
+        [Authorize(Roles = "Empresa")]
         [HttpPost]
         public async Task<IActionResult> Post(RecursoDto recursoDto)
         {
@@ -105,6 +126,22 @@ namespace TFGProject.Controllers
                 var recursoItemDto = _mapper.Map<RecursoDto>(recurso);
 
                 return CreatedAtAction("Get", new { id = recursoItemDto.Id }, recursoItemDto);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("cambiarEstado/{id}")]
+        public async Task<IActionResult> CambiarEstado(int id)
+        {
+            try
+            {
+                await _recursoRepository.UpdateRecurso(id);
+
+                return NoContent();
 
             }
             catch (Exception ex)

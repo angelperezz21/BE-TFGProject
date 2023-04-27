@@ -14,9 +14,10 @@ namespace TFGProject.Models.Repository.BeneficiarioR
 
         public async Task<Beneficiario> AddBeneficiario(Beneficiario beneficiario)
         {
-            var existBeneficiario = _context.Beneficiarios.FirstOrDefault(b => b.Nombre == beneficiario.Nombre 
-            && b.Email == beneficiario.Email);
-            if (existBeneficiario == null) return null;
+            var existEmpresa = _context.Empresas.FirstOrDefault(b => b.Email == beneficiario.Email);
+            if (existEmpresa != null) return null;
+            var existBeneficiario = _context.Beneficiarios.FirstOrDefault(b => b.Email == beneficiario.Email);
+            if (existBeneficiario != null) return null;
             _context.Add(beneficiario);
             await _context.SaveChangesAsync();
             return beneficiario;

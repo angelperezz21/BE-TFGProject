@@ -24,22 +24,23 @@ namespace TFGProject.Controllers
 
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginUsuario loginUsuario, int userType)
+        public async Task<IActionResult> Login([FromBody] LoginUsuario loginUsuario)
         {
             try
             {
-                if(userType == 1)
+                if(loginUsuario.userType == 1)
                 {
+
                     var user = await _loginRepository.LoginEmpresa(loginUsuario);
-                    if (user == null) return NotFound();
+                    if (user == null) return StatusCode(404, "Error contraseña");
                     return Ok(user);
                 }
 
                 else
                 {
                     var user = await _loginRepository.LoginBeneficiario(loginUsuario);
-                    if (user == null) return NotFound();
-                    return Ok(user);
+                    if (user == null) return StatusCode(404, "Error contraseña");
+                    return Ok(user);;
                 }
                 
             }

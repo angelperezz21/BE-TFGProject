@@ -25,14 +25,43 @@ namespace TFGProject.Models.Repository.RecursoR
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Recurso>> GetListRecursos()
+        public async Task<List<Recurso>> GetListRecursosPublicados()
         {
-            return await _context.Recursos.ToListAsync();
+            var empresas = await _context.Empresas.Include(x => x.Recursos).ToListAsync();
+            List<Recurso> listRecursos = new List<Recurso>();
+            foreach (var empresa in empresas)
+            {
+                foreach (var rec in empresa.Recursos)
+                {
+                    if (rec.Estado == 1 || rec.Estado == 2)
+                    {
+                        listRecursos.Add(rec);
+                    }
+                }
+            }
+                
+            return listRecursos;
+        }
+
+        public async Task<List<Recurso>> GetListRecursosEmpresa(int id)
+        {
+            var empresa = await _context.Empresas.Include(x=>x.Recursos).FirstOrDefaultAsync(x => x.Id == id);
+
+            return empresa.Recursos.ToList();
         }
 
         public async Task<Recurso> GetRecurso(int id)
         {
             return await _context.Recursos.FindAsync(id);
+        }
+
+        public async Task UpdateRecurso(int id)
+        {
+            var recurso =  await _context.Recursos.FindAsync(id);
+            if (recurso.Estado == 3) recurso.Estado = 1;
+            else recurso.Estado++;
+            await _context.SaveChangesAsync();
+
         }
     }
 }

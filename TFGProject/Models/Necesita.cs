@@ -1,21 +1,11 @@
 ﻿
-using TFGProject.Models.Estado;
+
 
 namespace TFGProject.Models
 {
     public class Necesita
     {
-        public Necesita()
-        {
-            _estado = new BorradorN();
-        }
-
-        public void DefinirEstado(EstadoNecesidad estado)
-        {
-            _estado = estado;
-        }
-
-        public EstadoNecesidad _estado;
+        public int Estado { get; set; }
         public int Id { get; set; }
         public string Nombre { get; set; }
         public double Precio { get; set; }

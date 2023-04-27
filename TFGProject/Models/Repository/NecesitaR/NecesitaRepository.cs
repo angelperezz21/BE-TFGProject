@@ -25,14 +25,44 @@ namespace TFGProject.Models.Repository.NecesitaR
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Necesita>> GetListNecesitas()
+        public async Task<List<Necesita>> GetListNecesidadesBeneficiario(int id)
         {
-            return await _context.Necesidades.ToListAsync();
+
+            var beneficiario = await _context.Beneficiarios.Include(x => x.Necesidades).FirstOrDefaultAsync(x => x.Id == id);
+
+            return beneficiario.Necesidades.ToList();
+        }
+
+        public async Task<List<Necesita>> GetListNecesidadesPublicadas()
+        {
+            var beneficiarios = await _context.Beneficiarios.Include(x => x.Necesidades).ToListAsync();
+            List<Necesita> listNecesidades = new List<Necesita>();
+            foreach (var beneficiario in beneficiarios)
+            {
+                foreach (var ben in beneficiario.Necesidades)
+                {
+                    if (ben.Estado == 0 || ben.Estado == 1)
+                    {
+                        listNecesidades.Add(ben);
+                    }
+                }
+            }
+
+            return listNecesidades;
         }
 
         public async Task<Necesita> GetNecesita(int id)
         {
             return await _context.Necesidades.FindAsync(id);
+        }
+
+        public async Task UpdateNecesita(int id)
+        {
+            var necesita = await _context.Necesidades.FindAsync(id);
+            if (necesita.Estado == 3) necesita.Estado = 1;
+            else necesita.Estado++;
+            await _context.SaveChangesAsync();
+
         }
     }
 }

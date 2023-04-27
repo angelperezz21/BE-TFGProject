@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TFGProject;
 
@@ -11,9 +12,11 @@ using TFGProject;
 namespace TFGProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230426180540_EditUsuario")]
+    partial class EditUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +70,7 @@ namespace TFGProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Beneficiarios", (string)null);
+                    b.ToTable("Beneficiarios");
                 });
 
             modelBuilder.Entity("TFGProject.Models.BeneficiariosSiguenEmpresa", b =>
@@ -82,7 +85,7 @@ namespace TFGProject.Migrations
 
                     b.HasIndex("IdEmpresa");
 
-                    b.ToTable("BeneficiariosSiguenEmpresa", (string)null);
+                    b.ToTable("BeneficiariosSiguenEmpresa");
                 });
 
             modelBuilder.Entity("TFGProject.Models.Certificado", b =>
@@ -99,7 +102,7 @@ namespace TFGProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Certificados", (string)null);
+                    b.ToTable("Certificados");
                 });
 
             modelBuilder.Entity("TFGProject.Models.Donacion", b =>
@@ -146,7 +149,7 @@ namespace TFGProject.Migrations
 
                     b.HasIndex("IdEmpresa");
 
-                    b.ToTable("Donaciones", (string)null);
+                    b.ToTable("Donaciones");
                 });
 
             modelBuilder.Entity("TFGProject.Models.Empresa", b =>
@@ -194,7 +197,7 @@ namespace TFGProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Empresas", (string)null);
+                    b.ToTable("Empresas");
                 });
 
             modelBuilder.Entity("TFGProject.Models.EmpresasSiguenBeneficiarios", b =>
@@ -209,7 +212,7 @@ namespace TFGProject.Migrations
 
                     b.HasIndex("IdEmpresa");
 
-                    b.ToTable("EmpresasSiguenBeneficiarios", (string)null);
+                    b.ToTable("EmpresasSiguenBeneficiarios");
                 });
 
             modelBuilder.Entity("TFGProject.Models.Necesita", b =>
@@ -240,7 +243,7 @@ namespace TFGProject.Migrations
 
                     b.HasIndex("IdBeneficiario");
 
-                    b.ToTable("Necesidades", (string)null);
+                    b.ToTable("Necesidades");
                 });
 
             modelBuilder.Entity("TFGProject.Models.Recurso", b =>
@@ -275,7 +278,7 @@ namespace TFGProject.Migrations
 
                     b.HasIndex("IdEmpresa");
 
-                    b.ToTable("Recursos", (string)null);
+                    b.ToTable("Recursos");
                 });
 
             modelBuilder.Entity("TFGProject.Models.BeneficiariosSiguenEmpresa", b =>

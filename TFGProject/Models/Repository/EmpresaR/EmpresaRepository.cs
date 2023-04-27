@@ -14,9 +14,10 @@ namespace TFGProject.Models.Repository.EmpresaR
 
         public async Task<Empresa> AddEmpresa(Empresa empresa)
         {
-            var existEmpresa = _context.Empresas.FirstOrDefault(b => b.Nombre == empresa.Nombre
-            && b.Email == empresa.Email);
-            if (existEmpresa == null) return null;
+            var existEmpresa = _context.Empresas.FirstOrDefault(b => b.Email == empresa.Email);
+            if (existEmpresa != null) return null;
+            var existBeneficiario = _context.Beneficiarios.FirstOrDefault(b => b.Email == empresa.Email);
+            if (existBeneficiario != null) return null;
             _context.Add(empresa);
             await _context.SaveChangesAsync();
             return empresa;
@@ -77,7 +78,7 @@ namespace TFGProject.Models.Repository.EmpresaR
                 if (empresa.Direccion != empresaItem.Direccion) empresaItem.Direccion = empresa.Direccion;
                 if (empresa.Web != empresaItem.Web) empresaItem.Web = empresa.Web;
                 if (empresa.Contacto != empresaItem.Contacto) empresaItem.Contacto = empresa.Contacto;
-                if (empresa.Tipo != empresaItem.Tipo) empresaItem.Tipo = empresa.Tipo;
+                if (empresa.Categoria != empresaItem.Categoria) empresaItem.Categoria = empresa.Categoria;
 
                 await _context.SaveChangesAsync();
             }

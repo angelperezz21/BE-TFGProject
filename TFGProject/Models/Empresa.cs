@@ -10,7 +10,6 @@
             BeneficiariosQueSigo = new HashSet<EmpresasSiguenBeneficiarios>();
 
         }
-        public string Tipo { get; set; }
         public ICollection<Recurso> Recursos { get; set; }
         public ICollection<Donacion> Donaciones { get; set; }
         public ICollection<BeneficiariosSiguenEmpresa> BeneficiariosQueMeSiguen { get; set; }

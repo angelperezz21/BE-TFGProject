@@ -2,6 +2,5 @@
 {
     public class BeneficiarioDto : UsuarioDto
     {
-        public string? Categoria { get; set; }
     }
 }
