@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TFGProject.Migrations
 {
     /// <inheritdoc />
-    public partial class bd : Migration
+    public partial class newDataBase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,8 @@ namespace TFGProject.Migrations
                 name: "Beneficiarios",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false, defaultValue: 1000),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1000, 1"),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Contrasenya = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -48,7 +49,8 @@ namespace TFGProject.Migrations
                 name: "Empresas",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Contrasenya = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(max)", nullable: false),

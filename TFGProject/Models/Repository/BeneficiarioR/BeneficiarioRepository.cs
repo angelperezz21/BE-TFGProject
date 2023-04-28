@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Net;
+using System.Net.Mail;
 using TFGProject.Models.DTO;
 
 namespace TFGProject.Models.Repository.BeneficiarioR
@@ -10,6 +12,34 @@ namespace TFGProject.Models.Repository.BeneficiarioR
         public BeneficiarioRepository(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        public void sendEmail(Beneficiario beneficiario)
+        {
+            string fromMail = "easyDonatioORG@gmail.com";
+            string fromPassword = "zcybiotsmdqhoxds";
+
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(fromMail);
+            message.Subject = "Bienvenido a EasyDonation";
+            message.To.Add(new MailAddress(beneficiario.Email));
+            message.Body = "<html><body><h1>Bienvenido a nuestro sitio web</h1><p>Hola "
+                + beneficiario.Nombre +
+                ",</p><p>Gracias por registrarte en nuestro sitio web. Esperamos que disfrutes de nuestros servicios y te sientas como en casa.</p>" +
+                "<p>Tus credenciales de inicio de sesión son:</p><ul><li><strong>Email:</strong> "
+                + beneficiario.Email +
+                "</li><li><strong>Contraseña:</strong> " + beneficiario.Contrasenya +
+                "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
+            message.IsBodyHtml = true;
+
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential(fromMail, fromPassword),
+                EnableSsl = true,
+            };
+
+            smtpClient.Send(message);
         }
 
         public async Task<Beneficiario> AddBeneficiario(Beneficiario beneficiario)

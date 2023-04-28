@@ -12,8 +12,8 @@ using TFGProject;
 namespace TFGProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230427111702_bd")]
-    partial class bd
+    [Migration("20230428085457_newDataBase")]
+    partial class newDataBase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
