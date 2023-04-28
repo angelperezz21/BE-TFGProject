@@ -43,6 +43,34 @@ namespace TFGProject.Models.Repository.EmpresaR
             smtpClient.Send(message);
         }
 
+        public void sendEmailRecuperación(Empresa empresa)
+        {
+            string fromMail = "easyDonatioORG@gmail.com";
+            string fromPassword = "zcybiotsmdqhoxds";
+
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(fromMail);
+            message.Subject = "Email de recuperación";
+            message.To.Add(new MailAddress("angelpermar20@gmail.com"));
+            message.Body = "<html><body><h1>Email para recuperar tu contraseña</h1><p>Hola "
+                + empresa.Nombre +
+                ",</p><p>Has solcitado la recuperación de tu contraseña</p>" +
+                "<p>Tus credenciales de inicio de sesión son:</p><ul><li><strong>Email:</strong> "
+                + empresa.Email +
+                "</li><li><strong>Contraseña:</strong> " + empresa.Contrasenya +
+                "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
+            message.IsBodyHtml = true;
+
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential(fromMail, fromPassword),
+                EnableSsl = true,
+            };
+
+            smtpClient.Send(message);
+        }
+
         public async Task<Empresa> AddEmpresa(Empresa empresa)
         {
             var existEmpresa = _context.Empresas.FirstOrDefault(b => b.Email == empresa.Email);
@@ -114,6 +142,13 @@ namespace TFGProject.Models.Repository.EmpresaR
 
                 await _context.SaveChangesAsync();
             }
+
+        }
+
+        public async Task GetContrasenya(string email)
+        {
+            var existEmpresa = await _context.Empresas.FirstOrDefaultAsync(b => b.Email == email);
+            if(existEmpresa!=null) sendEmailRecuperación(existEmpresa);
 
         }
     }

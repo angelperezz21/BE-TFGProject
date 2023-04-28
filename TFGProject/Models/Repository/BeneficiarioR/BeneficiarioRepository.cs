@@ -42,13 +42,42 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             smtpClient.Send(message);
         }
 
+        public void sendEmailRecuperación(Beneficiario beneficiario)
+        {
+            string fromMail = "easyDonatioORG@gmail.com";
+            string fromPassword = "zcybiotsmdqhoxds";
+
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(fromMail);
+            message.Subject = "Email de recuperación";
+            message.To.Add(new MailAddress(beneficiario.Email));
+            message.Body = "<html><body><h1>Email para recuperar tu contraseña</h1><p>Hola "
+                + beneficiario.Nombre +
+                ",</p><p>Has solcitado la recuperación de tu contraseña</p>" +
+                "<p>Tus credenciales de inicio de sesión son:</p><ul><li><strong>Email:</strong> "
+                + beneficiario.Email +
+                "</li><li><strong>Contraseña:</strong> " + beneficiario.Contrasenya +
+                "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
+            message.IsBodyHtml = true;
+
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential(fromMail, fromPassword),
+                EnableSsl = true,
+            };
+
+            smtpClient.Send(message);
+        }
+
         public async Task<Beneficiario> AddBeneficiario(Beneficiario beneficiario)
         {
-            var existEmpresa = _context.Empresas.FirstOrDefault(b => b.Email == beneficiario.Email);
+            var existEmpresa = await _context.Empresas.FirstOrDefaultAsync(b => b.Email == beneficiario.Email);
             if (existEmpresa != null) return null;
-            var existBeneficiario = _context.Beneficiarios.FirstOrDefault(b => b.Email == beneficiario.Email);
+            var existBeneficiario = await _context.Beneficiarios.FirstOrDefaultAsync(b => b.Email == beneficiario.Email);
             if (existBeneficiario != null) return null;
             _context.Add(beneficiario);
+            sendEmail(beneficiario);
             await _context.SaveChangesAsync();
             return beneficiario;
         }
@@ -114,6 +143,13 @@ namespace TFGProject.Models.Repository.BeneficiarioR
 
                 await _context.SaveChangesAsync();
             }
+
+        }
+
+        public async Task GetContrasenya(string email)
+        {
+            var existBeneficiario = await _context.Beneficiarios.FirstOrDefaultAsync(b => b.Email == email);
+            if(existBeneficiario != null) sendEmailRecuperación(existBeneficiario);
 
         }
     }

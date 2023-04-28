@@ -241,5 +241,22 @@ namespace TFGProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        [HttpGet("recuperarContrasenyaa")]
+        public async Task<IActionResult> GetContraseña(string email)
+        {
+            try
+            {
+                await _beneficiarioRepository.GetContrasenya(email);                
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

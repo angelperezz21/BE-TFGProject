@@ -12,5 +12,6 @@ namespace TFGProject.Models.Repository.EmpresaR
         Task UpdateEmpresa(EmpresaDto empresa, int id);
         Task<List<Beneficiario>> GetBeneficiariosSeguidos(int id);
         Task NuevoSeguido(int idBeneficiario, int idEmpresa);
+        Task GetContrasenya(string email);
     }
 }
