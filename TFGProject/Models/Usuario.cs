@@ -12,6 +12,7 @@
         public string Web { get; set; }
         public string Contacto { get; set; }
         public string Categoria { get; set; }
+        public string imgUrl { get; set; }
 
     }
 }

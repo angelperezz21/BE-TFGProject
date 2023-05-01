@@ -22,7 +22,7 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
             message.Subject = "Bienvenido a EasyDonation";
-            message.To.Add(new MailAddress(beneficiario.Email));
+            message.To.Add(new MailAddress("angelpermar20@gmail.com"));
             message.Body = "<html><body><h1>Bienvenido a nuestro sitio web</h1><p>Hola "
                 + beneficiario.Nombre +
                 ",</p><p>Gracias por registrarte en nuestro sitio web. Esperamos que disfrutes de nuestros servicios y te sientas como en casa.</p>" +
@@ -77,7 +77,7 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             var existBeneficiario = await _context.Beneficiarios.FirstOrDefaultAsync(b => b.Email == beneficiario.Email);
             if (existBeneficiario != null) return null;
             _context.Add(beneficiario);
-            sendEmail(beneficiario);
+            //sendEmail(beneficiario);
             await _context.SaveChangesAsync();
             return beneficiario;
         }
@@ -92,6 +92,19 @@ namespace TFGProject.Models.Repository.BeneficiarioR
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task UnfollowSeguido(int idBeneficiario, int idEmpresa)
+        {
+            var empresa = await _context.Empresas.FindAsync(idEmpresa);
+            var beneficiario = await _context.Beneficiarios.Include(x => x.EmpresasQueSigo).FirstOrDefaultAsync(x => x.Id == idBeneficiario);
+
+            var seguida =  beneficiario.EmpresasQueSigo.FirstOrDefault(e => e.IdEmpresa == idEmpresa && e.IdBeneficiario == idBeneficiario);
+
+            beneficiario.EmpresasQueSigo.Remove(seguida);
+
+            await _context.SaveChangesAsync();
+        }
+
 
         public async Task DeleteBeneficiario(Beneficiario beneficiario)
         {

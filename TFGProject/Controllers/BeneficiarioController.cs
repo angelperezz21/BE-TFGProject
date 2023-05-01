@@ -44,6 +44,7 @@ namespace TFGProject.Controllers
             }
         }
 
+        
         [HttpGet("listaEmpresasSeguidos/{id}")]
         public async Task<IActionResult> GetListaSeguidos(int id)
         {
@@ -190,18 +191,41 @@ namespace TFGProject.Controllers
 
         [Authorize(Roles = "Beneficiario")]
         [HttpPost("seguirEmpresa")]
-        public async Task<IActionResult> Post(int idEmpresa, int idBeneficiario)
+        public async Task<IActionResult> Post([FromBody] SeguirUsuario model)
         {
             try
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
-                if (idEmpresa.ToString() != userId)
+                if (model.idBeneficiario.ToString() != userId)
                 {
                     return Unauthorized();
                 }
 
-                await _beneficiarioRepository.NuevoSeguido(idBeneficiario, idEmpresa);
+                await _beneficiarioRepository.NuevoSeguido(model.idBeneficiario, model.idEmpresa);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Beneficiario")]
+        [HttpPost("dejarSeguirEmpresa")]
+        public async Task<IActionResult> PostUnfollowEmpresa([FromBody] SeguirUsuario model)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (model.idBeneficiario.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+                await _beneficiarioRepository.UnfollowSeguido(model.idBeneficiario, model.idEmpresa);
 
                 return NoContent();
             }
@@ -243,7 +267,7 @@ namespace TFGProject.Controllers
         }
 
 
-        [HttpGet("recuperarContrasenyaa")]
+        [HttpGet("recuperarContrasenya/{email}")]
         public async Task<IActionResult> GetContraseña(string email)
         {
             try

@@ -93,6 +93,18 @@ namespace TFGProject.Models.Repository.EmpresaR
             await _context.SaveChangesAsync();
         }
 
+        public async Task UnfollowSeguido(int idBeneficiario, int idEmpresa)
+        {
+            var empresa = await _context.Empresas.Include(x=>x.BeneficiariosQueSigo).FirstOrDefaultAsync(x => x.Id == idEmpresa);
+            var beneficiario = await _context.Beneficiarios.FindAsync(idBeneficiario);
+
+            var seguida = empresa.BeneficiariosQueSigo.FirstOrDefault(e => e.IdEmpresa == idEmpresa && e.IdBeneficiario == idBeneficiario);
+
+            empresa.BeneficiariosQueSigo.Remove(seguida);
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeleteEmpresa(Empresa empresa)
         {
             _context.Empresas.Remove(empresa);

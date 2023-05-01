@@ -8,6 +8,7 @@
         public string? Direccion { get; set; }
         public string? Web { get; set; }
         public string? Contacto { get; set; }
+        public string? imgUrl { get; set; }
 
     }
 }

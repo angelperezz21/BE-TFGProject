@@ -12,6 +12,7 @@ namespace TFGProject.Models.Repository.BeneficiarioR
         Task UpdateBeneficiario(BeneficiarioDto beneficiario, int id);
         Task<List<Empresa>> GetEmpresasSeguidos(int id);
         Task NuevoSeguido(int idBeneficiario, int idEmpresa);
+        Task UnfollowSeguido(int idBeneficiario, int idEmpresa);
         Task GetContrasenya(string email);
     }
 }

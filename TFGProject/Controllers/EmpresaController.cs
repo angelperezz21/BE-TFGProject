@@ -188,18 +188,41 @@ namespace TFGProject.Controllers
 
         [Authorize(Roles = "Empresa")]
         [HttpPost("seguirBeneficiario")]
-        public async Task<IActionResult> Post(int idEmpresa, int idBeneficiario)
+        public async Task<IActionResult> Post([FromBody] SeguirUsuario model)
         {
             try
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
-                if (idEmpresa.ToString() != userId)
+                if (model.idEmpresa.ToString() != userId)
                 {
                     return Unauthorized();
                 }
-                await _empresaRepository.NuevoSeguido(idBeneficiario, idEmpresa);
+                await _empresaRepository.NuevoSeguido(model.idBeneficiario, model.idEmpresa);
                 
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Empresa")]
+        [HttpPost("dejarSeguirBeneficiario")]
+        public async Task<IActionResult> PostUnfollowEmpresa([FromBody] SeguirUsuario model)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (model.idEmpresa.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+                await _empresaRepository.UnfollowSeguido(model.idBeneficiario, model.idEmpresa);
+
                 return NoContent();
             }
             catch (Exception ex)
