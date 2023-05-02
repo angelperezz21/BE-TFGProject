@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace TFGProject.Models.Repository.LoginR
 {
@@ -21,6 +22,12 @@ namespace TFGProject.Models.Repository.LoginR
 
         public async Task<EmpresaLogin> LoginEmpresa(LoginUsuario loginUsuario)
         {
+            using (var sha256 = SHA256.Create())
+            {
+                var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(loginUsuario.Contrasenya));
+                loginUsuario.Contrasenya = Convert.ToBase64String(hash);
+            }
+
             var user = await _context.Empresas.FirstOrDefaultAsync(user => user.Email.ToLower().Equals(loginUsuario.Email.ToLower())
             && user.Contrasenya.Equals(loginUsuario.Contrasenya));
 
@@ -55,6 +62,12 @@ namespace TFGProject.Models.Repository.LoginR
 
         public async Task<BeneficiarioLogin> LoginBeneficiario(LoginUsuario loginUsuario)
         {
+            using (var sha256 = SHA256.Create())
+            {
+                var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(loginUsuario.Contrasenya));
+                loginUsuario.Contrasenya = Convert.ToBase64String(hash);
+            }
+
             var user = await _context.Beneficiarios.FirstOrDefaultAsync(user => user.Email.ToLower().Equals(loginUsuario.Email.ToLower())
             && user.Contrasenya.Equals(loginUsuario.Contrasenya));
             

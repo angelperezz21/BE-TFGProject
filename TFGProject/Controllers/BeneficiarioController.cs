@@ -237,25 +237,25 @@ namespace TFGProject.Controllers
 
         [Authorize(Roles = "Beneficiario")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, BeneficiarioDto beneficiarioDto)
+        public async Task<IActionResult> Put([FromBody] BeneficiarioDto beneficiarioDto)
         {
             try
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
-                if (id.ToString() != userId)
+                if (beneficiarioDto.Id.ToString() != userId)
                 {
                     return Unauthorized();
                 }
 
-                var beneficiarioItem = await _beneficiarioRepository.GetBeneficiario(id);
+                var beneficiarioItem = await _beneficiarioRepository.GetBeneficiario((int)beneficiarioDto.Id);
 
                 if (beneficiarioItem == null)
                 {
                     return NotFound();
                 }
 
-                await _beneficiarioRepository.UpdateBeneficiario(beneficiarioDto, id);
+                await _beneficiarioRepository.UpdateBeneficiario(beneficiarioDto, (int)beneficiarioDto.Id);
 
                 return NoContent();
 

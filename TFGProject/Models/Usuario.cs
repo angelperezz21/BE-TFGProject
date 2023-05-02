@@ -13,6 +13,7 @@
         public string Contacto { get; set; }
         public string Categoria { get; set; }
         public string imgUrl { get; set; }
+        public string PasswordSinHash { get; set; }
 
     }
 }

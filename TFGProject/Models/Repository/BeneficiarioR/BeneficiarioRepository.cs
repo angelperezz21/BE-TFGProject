@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Mail;
+using System.Security.Cryptography;
+using System.Text;
 using TFGProject.Models.DTO;
 
 namespace TFGProject.Models.Repository.BeneficiarioR
@@ -76,8 +78,15 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             if (existEmpresa != null) return null;
             var existBeneficiario = await _context.Beneficiarios.FirstOrDefaultAsync(b => b.Email == beneficiario.Email);
             if (existBeneficiario != null) return null;
+
+            using (var sha256 = SHA256.Create())
+            {
+                var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(beneficiario.Contrasenya));
+                beneficiario.Contrasenya = Convert.ToBase64String(hash);
+            }
+
             _context.Add(beneficiario);
-            //sendEmail(beneficiario);
+            sendEmail(beneficiario);
             await _context.SaveChangesAsync();
             return beneficiario;
         }
@@ -142,10 +151,17 @@ namespace TFGProject.Models.Repository.BeneficiarioR
         public async Task UpdateBeneficiario(BeneficiarioDto beneficiario, int id)
         {
             var beneficiarioItem = await _context.Beneficiarios.FirstOrDefaultAsync(x => x.Id == id);
-
+            using (var sha256 = SHA256.Create())
+            {
+                if (beneficiarioItem != null && beneficiarioItem.Contrasenya != beneficiario.Contrasenya)
+                {
+                    var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(beneficiario.Contrasenya));
+                    beneficiario.Contrasenya = Convert.ToBase64String(hash);
+                }
+            }
             if (beneficiarioItem != null)
             {
-                if (beneficiario.Contrasenya != beneficiarioItem.Email) beneficiarioItem.Email = beneficiario.Contrasenya;
+                if (beneficiario.Contrasenya != beneficiarioItem.Contrasenya) beneficiarioItem.Contrasenya = beneficiario.Contrasenya;
                 if (beneficiario.Descripcion != beneficiarioItem.Descripcion) beneficiarioItem.Descripcion = beneficiario.Descripcion;
                 if (beneficiario.Nombre != beneficiarioItem.Nombre) beneficiarioItem.Nombre = beneficiario.Nombre;
                 if (beneficiario.Telefono != beneficiarioItem.Telefono) beneficiarioItem.Telefono = (int)beneficiario.Telefono;

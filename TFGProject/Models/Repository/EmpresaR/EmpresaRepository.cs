@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Mail;
+using System.Security.Cryptography;
+using System.Text;
 using TFGProject.Models.DTO;
 
 namespace TFGProject.Models.Repository.EmpresaR
@@ -77,6 +79,13 @@ namespace TFGProject.Models.Repository.EmpresaR
             if (existEmpresa != null) return null;
             var existBeneficiario = _context.Beneficiarios.FirstOrDefault(b => b.Email == empresa.Email);
             if (existBeneficiario != null) return null;
+
+            using (var sha256 = SHA256.Create())
+            {
+                var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(empresa.Contrasenya));
+                empresa.Contrasenya = Convert.ToBase64String(hash);
+            }
+
             _context.Add(empresa);
             sendEmail(empresa);
             await _context.SaveChangesAsync();
@@ -140,10 +149,18 @@ namespace TFGProject.Models.Repository.EmpresaR
         public async Task UpdateEmpresa(EmpresaDto empresa, int id)
         {
             var empresaItem = await _context.Empresas.FirstOrDefaultAsync(x => x.Id == id);
-
+            using (var sha256 = SHA256.Create())
+            {
+                if (empresaItem != null && empresaItem.Contrasenya!=empresa.Contrasenya)
+                {
+                    empresaItem.PasswordSinHash = empresa.Contrasenya;
+                    var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(empresa.Contrasenya));
+                    empresa.Contrasenya = Convert.ToBase64String(hash);
+                }              
+            }
             if (empresaItem != null)
             {
-                if (empresa.Contrasenya != empresaItem.Email) empresaItem.Email = empresa.Contrasenya;
+                if (empresa.Contrasenya != empresaItem.Contrasenya) empresaItem.Contrasenya = empresa.Contrasenya;
                 if (empresa.Descripcion != empresaItem.Descripcion) empresaItem.Descripcion = empresa.Descripcion;
                 if (empresa.Nombre != empresaItem.Nombre) empresaItem.Nombre = empresa.Nombre;
                 if (empresa.Telefono != empresaItem.Telefono) empresaItem.Telefono = (int) empresa.Telefono;

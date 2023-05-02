@@ -232,26 +232,26 @@ namespace TFGProject.Controllers
         }
 
         [Authorize(Roles = "Empresa")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, EmpresaDto empresaDto)
+        [HttpPut("update")]
+        public async Task<IActionResult> Put([FromBody] EmpresaDto empresaDto)
         {
             try
             {
                 var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
-                if (id.ToString() != userId)
+                if (empresaDto.Id.ToString() != userId)
                 {
                     return Unauthorized();
                 }
 
-                var empresaItem = await _empresaRepository.GetEmpresa(id);
+                var empresaItem = await _empresaRepository.GetEmpresa((int)empresaDto.Id);
 
                 if (empresaItem == null)
                 {
                     return NotFound();
                 }
 
-                await _empresaRepository.UpdateEmpresa(empresaDto, id);
+                await _empresaRepository.UpdateEmpresa(empresaDto, (int)empresaDto.Id);
 
                 return NoContent();
 
