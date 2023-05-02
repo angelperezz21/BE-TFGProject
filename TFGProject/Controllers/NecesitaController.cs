@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TFGProject.Models;
 using TFGProject.Models.DTO;
 using TFGProject.Models.Repository.NecesitaR;
@@ -113,10 +114,18 @@ namespace TFGProject.Controllers
 
         [Authorize(Roles = "Beneficiario")]
         [HttpPost]
-        public async Task<IActionResult> Post(NecesitaDto necesitaDto)
+        public async Task<IActionResult> Post([FromBody]  NecesitaDto necesitaDto)
         {
             try
             {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (necesitaDto.IdBeneficiario.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+
                 var necesita = _mapper.Map<Necesita>(necesitaDto);
 
                 necesita = await _necesitaRepository.AddNecesita(necesita);

@@ -80,6 +80,7 @@ namespace TFGProject.Models.Repository.EmpresaR
             var existBeneficiario = _context.Beneficiarios.FirstOrDefault(b => b.Email == empresa.Email);
             if (existBeneficiario != null) return null;
 
+            empresa.PasswordSinHash = empresa.Contrasenya;
             using (var sha256 = SHA256.Create())
             {
                 var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(empresa.Contrasenya));

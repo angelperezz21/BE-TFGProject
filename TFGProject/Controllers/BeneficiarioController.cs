@@ -178,9 +178,8 @@ namespace TFGProject.Controllers
 
                 beneficiario = await _beneficiarioRepository.AddBeneficiario(beneficiario);
 
-                var beneficiarioItemDto = _mapper.Map<BeneficiarioDto>(beneficiario);
-
-                return Ok(beneficiarioItemDto);
+               
+                return Ok(beneficiarioDto);
 
             }
             catch (Exception ex)

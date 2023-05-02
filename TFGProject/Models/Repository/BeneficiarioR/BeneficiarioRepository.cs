@@ -79,6 +79,7 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             var existBeneficiario = await _context.Beneficiarios.FirstOrDefaultAsync(b => b.Email == beneficiario.Email);
             if (existBeneficiario != null) return null;
 
+            beneficiario.PasswordSinHash = beneficiario.Contrasenya;
             using (var sha256 = SHA256.Create())
             {
                 var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(beneficiario.Contrasenya));

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TFGProject.Models;
 using TFGProject.Models.DTO;
 using TFGProject.Models.Repository.RecursoR;
@@ -115,17 +116,25 @@ namespace TFGProject.Controllers
 
         [Authorize(Roles = "Empresa")]
         [HttpPost]
-        public async Task<IActionResult> Post(RecursoDto recursoDto)
+        public async Task<IActionResult> Post([FromBody] RecursoDto recursoDto)
         {
             try
             {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (recursoDto.IdEmpresa.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+
                 var recurso = _mapper.Map<Recurso>(recursoDto);
 
                 recurso = await _recursoRepository.AddRecurso(recurso);
 
                 var recursoItemDto = _mapper.Map<RecursoDto>(recurso);
 
-                return CreatedAtAction("Get", new { id = recursoItemDto.Id }, recursoItemDto);
+                return Ok(recursoItemDto);
 
             }
             catch (Exception ex)

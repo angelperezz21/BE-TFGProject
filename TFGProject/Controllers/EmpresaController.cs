@@ -175,9 +175,9 @@ namespace TFGProject.Controllers
 
                 empresa = await _empresaRepository.AddEmpresa(empresa);
 
-                var empresaItemDto = _mapper.Map<EmpresaDto>(empresa);
+                
 
-                return Ok(empresaItemDto);
+                return Ok(empresaDto);
 
             }
             catch (Exception ex)

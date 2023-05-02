@@ -14,6 +14,7 @@ namespace TFGProject.Models.Repository.RecursoR
 
         public async Task<Recurso> AddRecurso(Recurso recurso)
         {
+            recurso.FechaCreacionRecurso = DateTime.Now;
             _context.Add(recurso);
             await _context.SaveChangesAsync();
             return recurso;

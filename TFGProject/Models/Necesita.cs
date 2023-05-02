@@ -10,6 +10,7 @@ namespace TFGProject.Models
         public string Nombre { get; set; }
         public double Precio { get; set; }
         public int Cantidad { get; set; }
+        public DateTime FechaCreacionRecurso { get; set; }
         public int IdBeneficiario { get; set; }
         public Beneficiario Beneficiario { get; set; }
     }
