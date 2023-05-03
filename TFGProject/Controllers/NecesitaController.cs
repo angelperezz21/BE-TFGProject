@@ -141,14 +141,15 @@ namespace TFGProject.Controllers
             }
         }
 
-        [HttpPut("cambiarEstado/{id}")]
-        public async Task<IActionResult> CambiarEstado(int id)
+        [Authorize(Roles = "Empresa")]
+        [HttpPut("solicitarNecesidad/{id}")]
+        public async Task<IActionResult> CambiarEstado(int idNecesita, int idEmpresa)
         {
             try
             {
-                await _necesitaRepository.UpdateNecesita(id);
-
-                return NoContent();
+                var recurso = await _necesitaRepository.SolicitarNecesidad(idNecesita,idEmpresa);
+                if (recurso == null) return StatusCode(409, "No se puede actualizar la necesidad");
+                return Ok();
 
             }
             catch (Exception ex)
@@ -156,5 +157,40 @@ namespace TFGProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize(Roles = "Beneficiario")]
+        [HttpPut("aceptarNecesidad/{id}")]
+        public async Task<IActionResult> AceptarRecurso(int id)
+        {
+            try
+            {
+                var recurso = await _necesitaRepository.AceptarNecesidad(id);
+                if (recurso == null) return StatusCode(409, "No se puede actualizar la necesidad");
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Beneficiario")]
+        [HttpPut("publicarNecesidad/{id}")]
+        public async Task<IActionResult> PublicarRecurso(int id)
+        {
+            try
+            {
+                var recurso = await _necesitaRepository.PublicarNecesidad(id);
+                if (recurso == null) return StatusCode(409, "No se puede actualizar la necesidad");
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

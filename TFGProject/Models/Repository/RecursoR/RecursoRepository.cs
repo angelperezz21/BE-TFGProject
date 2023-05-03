@@ -56,13 +56,30 @@ namespace TFGProject.Models.Repository.RecursoR
             return await _context.Recursos.FindAsync(id);
         }
 
-        public async Task UpdateRecurso(int id)
+        public async Task<Recurso> SolicitarRecurso(int idRecurso, int idBeneficiario)
         {
-            var recurso =  await _context.Recursos.FindAsync(id);
-            if (recurso.Estado == 3) recurso.Estado = 1;
-            else recurso.Estado++;
+            var recurso =  await _context.Recursos.FindAsync(idRecurso);
+            if (recurso.Estado == 1) recurso.Estado++;
+            else return null;
+            recurso.IdSolicitante = idBeneficiario;
             await _context.SaveChangesAsync();
-
+            return recurso;
+        }
+        public async Task<Recurso> AceptarRecurso(int id)
+        {
+            var recurso = await _context.Recursos.FindAsync(id);
+            if (recurso.Estado == 2) recurso.Estado++;
+            else return null;
+            await _context.SaveChangesAsync();
+            return recurso;
+        }
+        public async Task<Recurso> PublicarRecurso(int id)
+        {
+            var recurso = await _context.Recursos.FindAsync(id);
+            if (recurso.Estado == 3) recurso.Estado=1;
+            else return null;
+            await _context.SaveChangesAsync();
+            return recurso;
         }
     }
 }

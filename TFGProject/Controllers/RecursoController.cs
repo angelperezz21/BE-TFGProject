@@ -127,7 +127,6 @@ namespace TFGProject.Controllers
                     return Unauthorized();
                 }
 
-
                 var recurso = _mapper.Map<Recurso>(recursoDto);
 
                 recurso = await _recursoRepository.AddRecurso(recurso);
@@ -143,14 +142,15 @@ namespace TFGProject.Controllers
             }
         }
 
-        [HttpPut("cambiarEstado/{id}")]
-        public async Task<IActionResult> CambiarEstado(int id)
+        [Authorize(Roles = "Beneficiario")]
+        [HttpPut("solicitarRecurso/{id}")]
+        public async Task<IActionResult> CambiarEstado(int idRecurso, int idBeneficiario)
         {
             try
             {
-                await _recursoRepository.UpdateRecurso(id);
-
-                return NoContent();
+                var recurso = await _recursoRepository.SolicitarRecurso(idRecurso, idBeneficiario);
+                if(recurso==null) return StatusCode(409, "No se puede actualizar el recurso");
+                return Ok();
 
             }
             catch (Exception ex)
@@ -158,5 +158,41 @@ namespace TFGProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [Authorize(Roles = "Empresa")]
+        [HttpPut("aceptarRecurso/{id}")]
+        public async Task<IActionResult> AceptarRecurso(int id)
+        {
+            try
+            {
+                var recurso = await _recursoRepository.AceptarRecurso(id);
+                if (recurso == null) return StatusCode(409, "No se puede actualizar el recurso");
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Empresa")]
+        [HttpPut("publicarRecurso/{id}")]
+        public async Task<IActionResult> PublicarRecurso(int id)
+        {
+            try
+            {
+                var recurso = await _recursoRepository.PublicarRecurso(id);
+                if (recurso == null) return StatusCode(409, "No se puede actualizar el recurso");
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
     }
 }

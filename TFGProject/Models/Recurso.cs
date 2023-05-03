@@ -11,6 +11,7 @@ namespace TFGProject.Models
         public int Cantidad { get; set; }
         public string MetodoEntrega { get; set; }
         public DateTime FechaCreacionRecurso { get; set; }
+        public int? IdSolicitante { get; set; }
         public int IdEmpresa { get; set; }
         public Empresa Empresa { get; set; }
 

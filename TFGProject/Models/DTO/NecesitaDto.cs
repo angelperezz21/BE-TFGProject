@@ -7,6 +7,7 @@
         public string Nombre { get; set; }
         public double Precio { get; set; }
         public int Cantidad { get; set; }
+        public string Descripcion { get; set; }
         public int IdBeneficiario { get; set; }
     }
 }

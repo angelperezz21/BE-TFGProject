@@ -12,6 +12,7 @@ namespace TFGProject.Models.Repository.NecesitaR
             _context = context;
         }
 
+
         public async Task<Necesita> AddNecesita(Necesita necesita)
         {
             _context.Add(necesita);
@@ -56,13 +57,30 @@ namespace TFGProject.Models.Repository.NecesitaR
             return await _context.Necesidades.FindAsync(id);
         }
 
-        public async Task UpdateNecesita(int id)
+        public async Task<Necesita> SolicitarNecesidad(int idNecesidad, int idEmpresa)
+        {
+            var necesita = await _context.Necesidades.FindAsync(idNecesidad);
+            if (necesita.Estado == 1) necesita.Estado++;
+            else return null;
+            necesita.IdSolicitante = idEmpresa;
+            await _context.SaveChangesAsync();
+            return necesita;
+        }
+        public async Task<Necesita> AceptarNecesidad(int id)
+        {
+            var necesita = await _context.Necesidades.FindAsync(id);
+            if (necesita.Estado == 2) necesita.Estado++;
+            else return null;
+            await _context.SaveChangesAsync();
+            return necesita;
+        }
+        public async Task<Necesita> PublicarNecesidad(int id)
         {
             var necesita = await _context.Necesidades.FindAsync(id);
             if (necesita.Estado == 3) necesita.Estado = 1;
-            else necesita.Estado++;
+            else return null;
             await _context.SaveChangesAsync();
-
+            return necesita;
         }
     }
 }
