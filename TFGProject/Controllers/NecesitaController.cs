@@ -132,7 +132,8 @@ namespace TFGProject.Controllers
 
                 var necesitaItemDto = _mapper.Map<NecesitaDto>(necesita);
 
-                return CreatedAtAction("Get", new { id = necesitaItemDto.Id }, necesitaItemDto);
+
+                return Ok(necesitaItemDto);
 
             }
             catch (Exception ex)
@@ -160,11 +161,11 @@ namespace TFGProject.Controllers
 
         [Authorize(Roles = "Beneficiario")]
         [HttpPut("aceptarNecesidad/{id}")]
-        public async Task<IActionResult> AceptarRecurso(int id)
+        public async Task<IActionResult> AceptarRecurso(int idNecesita, int idEmpresa)
         {
             try
             {
-                var recurso = await _necesitaRepository.AceptarNecesidad(id);
+                var recurso = await _necesitaRepository.AceptarNecesidad(idNecesita, idEmpresa);
                 if (recurso == null) return StatusCode(409, "No se puede actualizar la necesidad");
                 return Ok();
 
@@ -176,21 +177,33 @@ namespace TFGProject.Controllers
         }
 
         [Authorize(Roles = "Beneficiario")]
-        [HttpPut("publicarNecesidad/{id}")]
-        public async Task<IActionResult> PublicarRecurso(int id)
+        [HttpGet("GetNotificaciones/{id}")]
+        public async Task<IActionResult> GetNecesidadNotificaciones(int id)
         {
             try
             {
-                var recurso = await _necesitaRepository.PublicarNecesidad(id);
-                if (recurso == null) return StatusCode(409, "No se puede actualizar la necesidad");
-                return Ok();
+                var necesita = await _necesitaRepository.GetNecesita(id);
+
+                if (necesita == null)
+                {
+                    return NotFound();
+                }
+
+                var necesitaDto = _mapper.Map<NecesitaDto>(necesita);
+
+                var listSolicitantes = await _necesitaRepository.GetNotificaciones(necesitaDto);
+
+                return Ok(listSolicitantes);
 
             }
             catch (Exception ex)
             {
+
                 return BadRequest(ex.Message);
             }
         }
+
+
 
     }
 }

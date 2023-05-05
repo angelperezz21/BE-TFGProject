@@ -10,8 +10,7 @@ namespace TFGProject.Models.Profiles
             CreateMap<Donacion, DonacionDto>();
             CreateMap<DonacionDto, Donacion>();
 
-            CreateMap<Certificado, CertificadoDto>();
-            CreateMap<CertificadoDto, Certificado>();
+
 
             CreateMap<Donacion, NewDonacionDto>();
             CreateMap<NewDonacionDto, Donacion>();

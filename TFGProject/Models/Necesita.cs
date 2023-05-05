@@ -1,6 +1,8 @@
 ﻿
 
 
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace TFGProject.Models
 {
     public class Necesita
@@ -12,8 +14,11 @@ namespace TFGProject.Models
         public int Cantidad { get; set; }
         public DateTime FechaCreacionRecurso { get; set; }
         public string Descripcion { get; set; }
-        public int? IdSolicitante { get; set; }
+        public bool Certificado { get; set; }
         public int IdBeneficiario { get; set; }
         public Beneficiario Beneficiario { get; set; }
+
+        [Column(TypeName = "text")]
+        public string? Solicitantes { get; set; }
     }
 }

@@ -156,6 +156,7 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             {
                 if (beneficiarioItem != null && beneficiarioItem.Contrasenya != beneficiario.Contrasenya)
                 {
+                    beneficiarioItem.PasswordSinHash = beneficiario.Contrasenya;
                     var hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(beneficiario.Contrasenya));
                     beneficiario.Contrasenya = Convert.ToBase64String(hash);
                 }
@@ -170,6 +171,7 @@ namespace TFGProject.Models.Repository.BeneficiarioR
                 if (beneficiario.Web != beneficiarioItem.Web) beneficiarioItem.Web = beneficiario.Web;
                 if (beneficiario.Contacto != beneficiarioItem.Contacto) beneficiarioItem.Contacto = beneficiario.Contacto;
                 if (beneficiario.Categoria != beneficiarioItem.Categoria) beneficiarioItem.Categoria = beneficiario.Categoria;
+                if (beneficiario.Notificacion != beneficiarioItem.Notificacion) beneficiarioItem.Notificacion = beneficiario.Notificacion;
 
                 await _context.SaveChangesAsync();
             }

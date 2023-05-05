@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Net;
+using System.Net.Mail;
 using TFGProject.Models.DTO;
 
 namespace TFGProject.Models.Repository.RecursoR
@@ -34,7 +36,7 @@ namespace TFGProject.Models.Repository.RecursoR
             {
                 foreach (var rec in empresa.Recursos)
                 {
-                    if (rec.Estado == 1 || rec.Estado == 2)
+                    if (rec.Estado == 1)
                     {
                         listRecursos.Add(rec);
                     }
@@ -59,27 +61,104 @@ namespace TFGProject.Models.Repository.RecursoR
         public async Task<Recurso> SolicitarRecurso(int idRecurso, int idBeneficiario)
         {
             var recurso =  await _context.Recursos.FindAsync(idRecurso);
+            var listSolicitantes = recurso.Solicitantes.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                            .Select(x => int.Parse(x))
+                                            .ToList();
+            recurso.Solicitantes = recurso.Solicitantes + idBeneficiario.ToString() + ",";
+
+            var empresa = await _context.Empresas.FindAsync(recurso.IdEmpresa);
+            empresa.Notificacion++;
+
+            var beneficiario = await _context.Beneficiarios.FindAsync(idBeneficiario);
+
+            sendSolicitarEmail(empresa, beneficiario);
+
+            await _context.SaveChangesAsync();
+            return recurso;
+        }
+        public async Task<Recurso> AceptarRecurso(int idRecurso, int idBeneficiario)
+        {
+            var recurso = await _context.Recursos.FindAsync(idRecurso);
             if (recurso.Estado == 1) recurso.Estado++;
             else return null;
-            recurso.IdSolicitante = idBeneficiario;
+            recurso.Solicitantes = "";
+
+            var empresa = await _context.Empresas.FindAsync(recurso.IdEmpresa);            
+
+            var beneficiario = await _context.Beneficiarios.FindAsync(idBeneficiario);
+
+            sendAceptarEmail(empresa, beneficiario);
             await _context.SaveChangesAsync();
             return recurso;
         }
-        public async Task<Recurso> AceptarRecurso(int id)
+
+        public void sendSolicitarEmail(Empresa empresa, Beneficiario beneficiario)
         {
-            var recurso = await _context.Recursos.FindAsync(id);
-            if (recurso.Estado == 2) recurso.Estado++;
-            else return null;
-            await _context.SaveChangesAsync();
-            return recurso;
+            string fromMail = "easyDonatioORG@gmail.com";
+            string fromPassword = "zcybiotsmdqhoxds";
+
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(fromMail);
+            message.Subject = "Bienvenido a EasyDonation";
+            message.To.Add(new MailAddress(empresa.Email));
+            message.Body = "<html><body><h1>Notifiación por solicitud de recurso</h1><p>Hola "
+                + empresa.Nombre +
+                ",</p><p>El beneficiario </p>" + beneficiario.Nombre + "<p> ha solicitado tu recurso.</p> " + 
+                "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
+
+            message.IsBodyHtml = true;
+
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential(fromMail, fromPassword),
+                EnableSsl = true,
+            };
+
+            smtpClient.Send(message);
         }
-        public async Task<Recurso> PublicarRecurso(int id)
+
+        public void sendAceptarEmail(Empresa empresa, Beneficiario beneficiario)
         {
-            var recurso = await _context.Recursos.FindAsync(id);
-            if (recurso.Estado == 3) recurso.Estado=1;
-            else return null;
-            await _context.SaveChangesAsync();
-            return recurso;
+            string fromMail = "easyDonatioORG@gmail.com";
+            string fromPassword = "zcybiotsmdqhoxds";
+
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(fromMail);
+            message.Subject = "Bienvenido a EasyDonation";
+            message.To.Add(new MailAddress(beneficiario.Email));
+            message.Body = "<html><body><h1>Notifiación por aceptación de recurso</h1><p>Hola "
+                + beneficiario.Nombre +
+                ",</p><p>La empresa </p>" + empresa.Nombre + "<p> ha aceptado la solicitud del recurso solicitado.</p> " +
+                "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
+
+            message.IsBodyHtml = true;
+
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential(fromMail, fromPassword),
+                EnableSsl = true,
+            };
+
+            smtpClient.Send(message);
+        }
+
+        public async Task<List<SolicitanteDto>> GetNotificaciones(RecursoDto recurso)
+        {
+            var listSolicitantes = recurso.Solicitantes.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                          .Select(x => int.Parse(x))
+                                          .ToList();
+
+            var listBeneficiarios = new List<SolicitanteDto>();
+            foreach (var soli in listSolicitantes)
+            {
+                var beneficiario = await _context.Beneficiarios.FindAsync(soli);
+                listBeneficiarios.Add(new SolicitanteDto { Id = soli, Nombre = beneficiario.Nombre });
+            }
+
+            return listBeneficiarios;
+
         }
     }
 }

@@ -9,6 +9,8 @@
         public int Cantidad { get; set; }
         public string MetodoEntrega { get; set; }
         public int IdEmpresa { get; set; }
+        public bool Certificado { get; set; }
+        public string? Solicitantes { get; set; }
 
     }
 }

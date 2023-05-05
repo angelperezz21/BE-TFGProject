@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata;
 using System.Security.Claims;
 using TFGProject.Models;
 using TFGProject.Models.DTO;
@@ -46,40 +49,27 @@ namespace TFGProject.Controllers
 
         [Authorize]
         [HttpGet("certificado/{id}")]
-        public async Task<IActionResult> GetCertificado(int idDonacion)
+        public async Task<HttpResponseMessage> GetCertificado(int id)
         {
-            try
-            {
-                var donacion = await _donacionRepository.GetDonacion(idDonacion);
+            
+                var donacion = await _donacionRepository.GetDonacion(id);
 
-                if (donacion == null)
-                {
-                    return NotFound();
-                }
+                //if (donacion == null)
+                //{
+                //    return NotFound();
+                //}
                 var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+        
+                //if (donacion.IdEmpresa.ToString() != userId && donacion.IdBeneficiario.ToString() != userId)
+                //{
+                //    return Unauthorized();
+                //}
 
-                if (donacion.IdEmpresa.ToString() != userId || donacion.IdBeneficiario.ToString() != userId)
-                {
-                    return Unauthorized();
-                }
+                return _donacionRepository.GenerarPDFCertificado(donacion);                
+                
 
-                var certificado = await _donacionRepository.GetCertificadoDonacion((int)donacion.IdCertificado);
-
-                if (certificado == null)
-                {
-                    return NotFound();
-                }
-
-                var certificadoDto = _mapper.Map<CertificadoDto>(certificado);
-
-                return Ok(certificadoDto);
-
-            }
-            catch (Exception ex)
-            {
-
-                return BadRequest(ex.Message);
-            }
+            
+            
         }
 
         [Authorize]
@@ -135,5 +125,6 @@ namespace TFGProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TFGProject;
 
@@ -11,9 +12,11 @@ using TFGProject;
 namespace TFGProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230505084332_certificadoDonacion")]
+    partial class certificadoDonacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,6 +232,9 @@ namespace TFGProject.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("IdBeneficiario")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdSolicitante")
                         .HasColumnType("int");
 
                     b.Property<string>("Nombre")

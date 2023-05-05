@@ -11,8 +11,6 @@
         public int IdEmpresa { get; set; }
         public int IdBeneficiario { get; set; }
         public Empresa Empresa { get; set; }
-        public Beneficiario Beneficiario { get; set; }
-        public int? IdCertificado { get; set; }
-        public Certificado? Certificado { get; set; }
+        public Beneficiario Beneficiario { get; set; }              
     }
 }

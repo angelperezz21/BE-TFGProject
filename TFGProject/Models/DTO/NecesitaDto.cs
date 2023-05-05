@@ -9,5 +9,7 @@
         public int Cantidad { get; set; }
         public string Descripcion { get; set; }
         public int IdBeneficiario { get; set; }
+        public bool Certificado { get; set; }
+        public string? Solicitantes { get; set; }
     }
 }

@@ -13,8 +13,7 @@ namespace TFGProject
         public DbSet<Beneficiario> Beneficiarios { get; set; }
         public DbSet<Necesita> Necesidades { get; set; }
         public DbSet<Donacion> Donaciones { get; set; }
-        public DbSet<Recurso> Recursos { get; set; }
-        public DbSet<Certificado> Certificados { get; set; }
+        public DbSet<Recurso> Recursos { get; set; }        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,16 +28,14 @@ namespace TFGProject
             modelBuilder.Entity<Necesita>().HasKey(b => b.Id);
             modelBuilder.Entity<Necesita>()
                 .HasOne(z => z.Beneficiario).WithMany(z => z.Necesidades).HasForeignKey(b => b.IdBeneficiario);
+            
 
             modelBuilder.Entity<Recurso>().HasKey(b => b.Id);
             modelBuilder.Entity<Recurso>()
                 .HasOne(z => z.Empresa).WithMany(z => z.Recursos).HasForeignKey(b => b.IdEmpresa);
-
-            modelBuilder.Entity<Certificado>().HasKey(b => b.Id);
+            
 
             modelBuilder.Entity<Donacion>().HasKey(b => b.Id);
-            modelBuilder.Entity<Donacion>()
-                .HasOne(z => z.Certificado).WithOne(z => z.Donacion).HasForeignKey<Donacion>(z => z.IdCertificado);
             modelBuilder.Entity<Donacion>()
                 .HasOne(z => z.Empresa).WithMany(z => z.Donaciones).HasForeignKey(z => z.IdEmpresa);
             modelBuilder.Entity<Donacion>()

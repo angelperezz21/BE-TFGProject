@@ -10,7 +10,7 @@ namespace TFGProject.Models.Repository.NecesitaR
         Task DeleteNecesita(Necesita necesita);
         Task<Necesita> AddNecesita(Necesita necesita);
         Task<Necesita> SolicitarNecesidad(int idNecesita, int idEmpresa);
-        Task<Necesita> AceptarNecesidad(int id);
-        Task<Necesita> PublicarNecesidad(int id);
+        Task<Necesita> AceptarNecesidad(int idNecesita, int idEmpresa);
+        Task<List<SolicitanteDto>> GetNotificaciones(NecesitaDto necesita);
     }
 }

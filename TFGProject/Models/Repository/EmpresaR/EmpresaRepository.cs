@@ -169,6 +169,7 @@ namespace TFGProject.Models.Repository.EmpresaR
                 if (empresa.Web != empresaItem.Web) empresaItem.Web = empresa.Web;
                 if (empresa.Contacto != empresaItem.Contacto) empresaItem.Contacto = empresa.Contacto;
                 if (empresa.Categoria != empresaItem.Categoria) empresaItem.Categoria = empresa.Categoria;
+                if (empresa.Notificacion != empresaItem.Notificacion) empresaItem.Notificacion = empresa.Notificacion;
 
                 await _context.SaveChangesAsync();
             }

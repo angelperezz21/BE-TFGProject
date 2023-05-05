@@ -232,7 +232,7 @@ namespace TFGProject.Controllers
         }
 
         [Authorize(Roles = "Empresa")]
-        [HttpPut("update")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Put([FromBody] EmpresaDto empresaDto)
         {
             try
@@ -253,7 +253,7 @@ namespace TFGProject.Controllers
 
                 await _empresaRepository.UpdateEmpresa(empresaDto, (int)empresaDto.Id);
 
-                return NoContent();
+                return Ok();
 
             }
             catch (Exception ex)
@@ -269,6 +269,38 @@ namespace TFGProject.Controllers
             {
                 await _empresaRepository.GetContrasenya(email);
                 return Ok();
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Empresa")]
+        [HttpGet("Notificaciones/{id}")]
+        public async Task<IActionResult> GetNotificaciones(int id)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (id.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+                var empresa = await _empresaRepository.GetEmpresa(id);
+
+                if (empresa == null)
+                {
+                    return NotFound();
+                }
+
+                var empresaDto = _mapper.Map<EmpresaDto>(empresa);
+
+                return Ok(empresaDto.Notificacion);
 
             }
             catch (Exception ex)

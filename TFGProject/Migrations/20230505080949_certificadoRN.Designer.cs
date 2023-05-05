@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TFGProject;
 
@@ -11,9 +12,11 @@ using TFGProject;
 namespace TFGProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230505080949_certificadoRN")]
+    partial class certificadoRN
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,6 +96,23 @@ namespace TFGProject.Migrations
                     b.ToTable("BeneficiariosSiguenEmpresa");
                 });
 
+            modelBuilder.Entity("TFGProject.Models.Certificado", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Ruta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Certificados");
+                });
+
             modelBuilder.Entity("TFGProject.Models.Donacion", b =>
                 {
                     b.Property<int>("Id")
@@ -108,6 +128,9 @@ namespace TFGProject.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("IdBeneficiario")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdCertificado")
                         .HasColumnType("int");
 
                     b.Property<int>("IdEmpresa")
@@ -127,6 +150,10 @@ namespace TFGProject.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("IdBeneficiario");
+
+                    b.HasIndex("IdCertificado")
+                        .IsUnique()
+                        .HasFilter("[IdCertificado] IS NOT NULL");
 
                     b.HasIndex("IdEmpresa");
 
@@ -231,6 +258,9 @@ namespace TFGProject.Migrations
                     b.Property<int>("IdBeneficiario")
                         .HasColumnType("int");
 
+                    b.Property<int?>("IdSolicitante")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -319,6 +349,10 @@ namespace TFGProject.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TFGProject.Models.Certificado", "Certificado")
+                        .WithOne("Donacion")
+                        .HasForeignKey("TFGProject.Models.Donacion", "IdCertificado");
+
                     b.HasOne("TFGProject.Models.Empresa", "Empresa")
                         .WithMany("Donaciones")
                         .HasForeignKey("IdEmpresa")
@@ -326,6 +360,8 @@ namespace TFGProject.Migrations
                         .IsRequired();
 
                     b.Navigation("Beneficiario");
+
+                    b.Navigation("Certificado");
 
                     b.Navigation("Empresa");
                 });
@@ -380,6 +416,12 @@ namespace TFGProject.Migrations
                     b.Navigation("EmpresasQueSigo");
 
                     b.Navigation("Necesidades");
+                });
+
+            modelBuilder.Entity("TFGProject.Models.Certificado", b =>
+                {
+                    b.Navigation("Donacion")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TFGProject.Models.Empresa", b =>

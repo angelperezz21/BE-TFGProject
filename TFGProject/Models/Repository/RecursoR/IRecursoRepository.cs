@@ -10,7 +10,7 @@ namespace TFGProject.Models.Repository.RecursoR
         Task DeleteRecurso(Recurso recurso);
         Task<Recurso> AddRecurso(Recurso recurso);
         Task<Recurso> SolicitarRecurso(int idRecurso, int idBeneficiario);
-        Task<Recurso> AceptarRecurso(int id);
-        Task<Recurso> PublicarRecurso(int id);
+        Task<Recurso> AceptarRecurso(int idRecurso, int idBeneficiario);
+        Task<List<SolicitanteDto>> GetNotificaciones(RecursoDto recurso);
     }
 }

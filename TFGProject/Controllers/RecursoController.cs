@@ -44,7 +44,7 @@ namespace TFGProject.Controllers
             }
         }
 
-
+        [Authorize]
         [HttpGet("listaRecursosEmpresa/{id}")]
         public async Task<IActionResult> GetListaRecursosEmpresa(int id)
         {
@@ -144,11 +144,11 @@ namespace TFGProject.Controllers
 
         [Authorize(Roles = "Beneficiario")]
         [HttpPut("solicitarRecurso/{id}")]
-        public async Task<IActionResult> CambiarEstado(int idRecurso, int idBeneficiario)
+        public async Task<IActionResult> CambiarEstado([FromBody] EstadoRecursoDto estadoRecurso)
         {
             try
             {
-                var recurso = await _recursoRepository.SolicitarRecurso(idRecurso, idBeneficiario);
+                var recurso = await _recursoRepository.SolicitarRecurso(estadoRecurso.idRecurso, estadoRecurso.idBeneficiario);
                 if(recurso==null) return StatusCode(409, "No se puede actualizar el recurso");
                 return Ok();
 
@@ -161,11 +161,11 @@ namespace TFGProject.Controllers
 
         [Authorize(Roles = "Empresa")]
         [HttpPut("aceptarRecurso/{id}")]
-        public async Task<IActionResult> AceptarRecurso(int id)
+        public async Task<IActionResult> AceptarRecurso([FromBody] EstadoRecursoDto estadoRecurso)
         {
             try
             {
-                var recurso = await _recursoRepository.AceptarRecurso(id);
+                var recurso = await _recursoRepository.AceptarRecurso(estadoRecurso.idRecurso, estadoRecurso.idBeneficiario);
                 if (recurso == null) return StatusCode(409, "No se puede actualizar el recurso");
                 return Ok();
 
@@ -177,18 +177,28 @@ namespace TFGProject.Controllers
         }
 
         [Authorize(Roles = "Empresa")]
-        [HttpPut("publicarRecurso/{id}")]
-        public async Task<IActionResult> PublicarRecurso(int id)
+        [HttpGet("GetNotificaciones/{id}")]
+        public async Task<IActionResult> GetRecursoNotificaciones(int id)
         {
             try
             {
-                var recurso = await _recursoRepository.PublicarRecurso(id);
-                if (recurso == null) return StatusCode(409, "No se puede actualizar el recurso");
-                return Ok();
+                var recurso = await _recursoRepository.GetRecurso(id);
+
+                if (recurso == null)
+                {
+                    return NotFound();
+                }
+
+                var recursoDto = _mapper.Map<RecursoDto>(recurso);
+
+                var listBeneficiarios = await _recursoRepository.GetNotificaciones(recursoDto);
+
+                return Ok(listBeneficiarios);
 
             }
             catch (Exception ex)
             {
+
                 return BadRequest(ex.Message);
             }
         }

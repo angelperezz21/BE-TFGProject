@@ -235,7 +235,7 @@ namespace TFGProject.Controllers
         }
 
         [Authorize(Roles = "Beneficiario")]
-        [HttpPut("{id}")]
+        [HttpPut("update")]
         public async Task<IActionResult> Put([FromBody] BeneficiarioDto beneficiarioDto)
         {
             try
@@ -256,7 +256,7 @@ namespace TFGProject.Controllers
 
                 await _beneficiarioRepository.UpdateBeneficiario(beneficiarioDto, (int)beneficiarioDto.Id);
 
-                return NoContent();
+                return Ok();
 
             }
             catch (Exception ex)
@@ -273,6 +273,38 @@ namespace TFGProject.Controllers
             {
                 await _beneficiarioRepository.GetContrasenya(email);                
                 return Ok();
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Beneficiario")]
+        [HttpGet("Notificaciones/{id}")]
+        public async Task<IActionResult> GetNotificaciones(int id)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (id.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+                var beneficiario = await _beneficiarioRepository.GetBeneficiario(id);
+
+                if (beneficiario == null)
+                {
+                    return NotFound();
+                }
+
+                var beneficiarioDto = _mapper.Map<BeneficiarioDto>(beneficiario);
+
+                return Ok(beneficiarioDto.Notificacion);
 
             }
             catch (Exception ex)
