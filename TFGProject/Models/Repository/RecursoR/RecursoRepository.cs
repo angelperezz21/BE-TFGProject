@@ -61,9 +61,6 @@ namespace TFGProject.Models.Repository.RecursoR
         public async Task<Recurso> SolicitarRecurso(int idRecurso, int idBeneficiario)
         {
             var recurso =  await _context.Recursos.FindAsync(idRecurso);
-            var listSolicitantes = recurso.Solicitantes.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                            .Select(x => int.Parse(x))
-                                            .ToList();
             recurso.Solicitantes = recurso.Solicitantes + idBeneficiario.ToString() + ",";
 
             var empresa = await _context.Empresas.FindAsync(recurso.IdEmpresa);
@@ -159,6 +156,27 @@ namespace TFGProject.Models.Repository.RecursoR
 
             return listBeneficiarios;
 
+        }
+
+        public async Task<List<Recurso>> GetSolicitudesRecursos(int id)
+        {
+            var listRecursos = new List<Recurso>();
+
+            var listAllRecursos = await _context.Recursos.ToListAsync();
+
+            foreach(var rec in listAllRecursos)
+            {
+                if (rec.Solicitantes != null) { 
+                    var listSolicitantes = rec.Solicitantes.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                                .Select(x => int.Parse(x))
+                                                .ToList();
+                    if (listSolicitantes.Contains(id))
+                    {
+                        listRecursos.Add(rec);
+                    }
+                }
+            }
+            return listRecursos;
         }
     }
 }

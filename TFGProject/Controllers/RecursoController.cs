@@ -44,7 +44,29 @@ namespace TFGProject.Controllers
             }
         }
 
-        [Authorize]
+        [HttpGet("listaRecursosNuevos")]
+        public async Task<IActionResult> GetListRecursosNuevos()
+        {
+            try
+            {
+                var listrecursos = await _recursoRepository.GetListRecursosPublicados();
+
+                var listrecursosDto = _mapper.Map<IEnumerable<RecursoDto>>(listrecursos);
+
+                DateTime fechaActual = DateTime.Now;
+
+                var primeros10Objetos = listrecursosDto.OrderBy(o => Math.Abs((fechaActual.Ticks - ((DateTime)o.FechaCreacionRecurso).Ticks))).Take(10);
+
+                return Ok(primeros10Objetos);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("listaRecursosEmpresa/{id}")]
         public async Task<IActionResult> GetListaRecursosEmpresa(int id)
         {
@@ -91,6 +113,33 @@ namespace TFGProject.Controllers
             }
         }
 
+        [Authorize(Roles = "Beneficiario")]
+        [HttpGet("solicitudesRecursos/{id}")]
+        public async Task<IActionResult> GetMisSolicitudesRecurso(int id)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (id.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+                var listRecursos = await _recursoRepository.GetSolicitudesRecursos(id);
+
+                var listrecursosDto = _mapper.Map<IEnumerable<RecursoDto>>(listRecursos);
+
+                return Ok(listrecursosDto);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
         [Authorize(Roles = "Empresa")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -98,6 +147,13 @@ namespace TFGProject.Controllers
             try
             {
                 var recurso = await _recursoRepository.GetRecurso(id);
+
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (recurso.IdEmpresa.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
 
                 if (recurso == null)
                 {

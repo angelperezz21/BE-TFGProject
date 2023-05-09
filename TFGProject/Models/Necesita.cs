@@ -12,7 +12,7 @@ namespace TFGProject.Models
         public string Nombre { get; set; }
         public double Precio { get; set; }
         public int Cantidad { get; set; }
-        public DateTime FechaCreacionRecurso { get; set; }
+        public DateTime FechaCreacionNecesita { get; set; }
         public string Descripcion { get; set; }
         public bool Certificado { get; set; }
         public int IdBeneficiario { get; set; }

@@ -2,6 +2,5 @@
 {
     public class EmpresaPerfilDto : UsuarioPerfilDto
     {
-        public string? Tipo { get; set; }
     }
 }

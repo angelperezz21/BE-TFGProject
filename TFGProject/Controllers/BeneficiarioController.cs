@@ -17,11 +17,13 @@ namespace TFGProject.Controllers
 
         private readonly IMapper _mapper;
         private readonly IBeneficiarioRepository _beneficiarioRepository;
+        private readonly IWebHostEnvironment _environment;
 
-        public BeneficiarioController(IMapper mapper, IBeneficiarioRepository beneficiarioRepository)
+        public BeneficiarioController(IMapper mapper, IBeneficiarioRepository beneficiarioRepository, IWebHostEnvironment environment)
         {
             _mapper = mapper;
             _beneficiarioRepository = beneficiarioRepository;
+            _environment = environment;
         }
 
 
@@ -44,7 +46,27 @@ namespace TFGProject.Controllers
             }
         }
 
-        
+
+        [HttpGet("beneficiariosTotales")]
+        public async Task<IActionResult> GetTotalBeneficiarios()
+        {
+            try
+            {
+                var listbeneficiarios = await _beneficiarioRepository.GetListBeneficiarios();
+
+                var listbeneficiariosDto = _mapper.Map<IEnumerable<BeneficiarioDto>>(listbeneficiarios);
+
+                return Ok(listbeneficiariosDto.Count());
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+
         [HttpGet("listaEmpresasSeguidos/{id}")]
         public async Task<IActionResult> GetListaSeguidos(int id)
         {
@@ -127,6 +149,30 @@ namespace TFGProject.Controllers
                 }
 
                 var beneficiarioDto = _mapper.Map<BeneficiarioDto>(beneficiario);
+
+                return Ok(beneficiarioDto);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("beneficiarioPerfil/{id}")]
+        public async Task<IActionResult> GetPerfilBeneficiario(int id)
+        {
+            try
+            {
+                var beneficiario = await _beneficiarioRepository.GetBeneficiario(id);
+
+                if (beneficiario == null)
+                {
+                    return NotFound();
+                }
+
+                var beneficiarioDto = _mapper.Map<BeneficiarioPerfilDto>(beneficiario);
 
                 return Ok(beneficiarioDto);
 
@@ -312,6 +358,24 @@ namespace TFGProject.Controllers
 
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload(IFormFile image)
+        {
+            // generar un nombre único para la imagen
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
+
+            // guardar la imagen en el sistema de archivos del servidor
+            var filePath = Path.Combine(_environment.WebRootPath, "uploads", fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            // devolver la ruta de acceso de la imagen guardada
+            var imagePath = $"/uploads/{fileName}";
+            return Ok(new { imagePath = imagePath });
         }
     }
 }

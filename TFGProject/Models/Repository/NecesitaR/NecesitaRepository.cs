@@ -17,6 +17,7 @@ namespace TFGProject.Models.Repository.NecesitaR
 
         public async Task<Necesita> AddNecesita(Necesita necesita)
         {
+            necesita.FechaCreacionNecesita = DateTime.Now;
             _context.Add(necesita);
             await _context.SaveChangesAsync();
             return necesita;
@@ -62,9 +63,7 @@ namespace TFGProject.Models.Repository.NecesitaR
         public async Task<Necesita> SolicitarNecesidad(int idNecesidad, int idEmpresa)
         {
             var necesita = await _context.Necesidades.FindAsync(idNecesidad);
-            var listSolicitantes = necesita.Solicitantes.Split(',', StringSplitOptions.RemoveEmptyEntries)
-                                            .Select(x => int.Parse(x))
-                                            .ToList();
+
             necesita.Solicitantes = necesita.Solicitantes + idEmpresa.ToString() + ",";
 
             var beneficiario = await _context.Beneficiarios.FindAsync(necesita.IdBeneficiario);
@@ -160,7 +159,28 @@ namespace TFGProject.Models.Repository.NecesitaR
             }
 
             return listEmpresas;
+        }
 
+        public async Task<List<Necesita>> GetSolicitudesNecesita(int id)
+        {
+            var listNecesitas = new List<Necesita>();
+
+            var listAllNecesitas = await _context.Necesidades.ToListAsync();
+
+            foreach (var nec in listAllNecesitas)
+            {
+                if (nec.Solicitantes != null)
+                {
+                    var listSolicitantes = nec.Solicitantes.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                                .Select(x => int.Parse(x))
+                                                .ToList();
+                    if (listSolicitantes.Contains(id))
+                    {
+                        listNecesitas.Add(nec);
+                    }
+                }
+            }
+            return listNecesitas;
         }
     }
 }

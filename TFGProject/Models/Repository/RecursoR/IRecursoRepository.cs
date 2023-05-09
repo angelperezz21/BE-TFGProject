@@ -12,5 +12,6 @@ namespace TFGProject.Models.Repository.RecursoR
         Task<Recurso> SolicitarRecurso(int idRecurso, int idBeneficiario);
         Task<Recurso> AceptarRecurso(int idRecurso, int idBeneficiario);
         Task<List<SolicitanteDto>> GetNotificaciones(RecursoDto recurso);
+        Task<List<Recurso>> GetSolicitudesRecursos(int id);
     }
 }

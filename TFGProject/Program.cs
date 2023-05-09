@@ -71,6 +71,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowWebapp");
 
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

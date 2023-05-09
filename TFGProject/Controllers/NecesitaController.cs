@@ -41,6 +41,28 @@ namespace TFGProject.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet("listaNecesidadesNuevas")]
+        public async Task<IActionResult> GetListNecesidadesNuevasBeneficiario()
+        {
+            try
+            {
+                var listnecesitas = await _necesitaRepository.GetListNecesidadesPublicadas();
+
+                var listnecesitasDto = _mapper.Map<IEnumerable<NecesitaDto>>(listnecesitas);
+                
+                DateTime fechaActual = DateTime.Now;
+
+                var primeros10Objetos = listnecesitasDto.OrderBy(o => Math.Abs((fechaActual.Ticks - ((DateTime)o.FechaCreacionNecesita).Ticks))).Take(10);
+
+                return Ok(primeros10Objetos);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
@@ -62,6 +84,33 @@ namespace TFGProject.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+
+        [Authorize(Roles = "Empresa")]
+        [HttpGet("solicitudesNecesitas/{id}")]
+        public async Task<IActionResult> GetMisSolicitudesNecesitas(int id)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (id.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+                var listNecesitas = await _necesitaRepository.GetSolicitudesNecesita(id);
+
+                var listnecesitasDto = _mapper.Map<IEnumerable<NecesitaDto>>(listNecesitas);
+
+                return Ok(listnecesitasDto);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
 
         [Authorize(Roles = "Beneficiario")]
@@ -144,11 +193,11 @@ namespace TFGProject.Controllers
 
         [Authorize(Roles = "Empresa")]
         [HttpPut("solicitarNecesidad/{id}")]
-        public async Task<IActionResult> CambiarEstado(int idNecesita, int idEmpresa)
+        public async Task<IActionResult> CambiarEstado([FromBody] EstadoNecesitaDto estadoNecesita)
         {
             try
             {
-                var recurso = await _necesitaRepository.SolicitarNecesidad(idNecesita,idEmpresa);
+                var recurso = await _necesitaRepository.SolicitarNecesidad(estadoNecesita.idNecesidad, estadoNecesita.idEmpresa);
                 if (recurso == null) return StatusCode(409, "No se puede actualizar la necesidad");
                 return Ok();
 

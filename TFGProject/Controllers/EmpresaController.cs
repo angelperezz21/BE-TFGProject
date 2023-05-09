@@ -5,6 +5,9 @@ using System.Security.Claims;
 using TFGProject.Models;
 using TFGProject.Models.DTO;
 using TFGProject.Models.Repository.EmpresaR;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,11 +20,13 @@ namespace TFGProject.Controllers
 
         private readonly IMapper _mapper;
         private readonly IEmpresaRepository _empresaRepository;
+        private readonly IWebHostEnvironment _environment;
 
-        public EmpresaController(IMapper mapper, IEmpresaRepository empresaRepository)
+        public EmpresaController(IMapper mapper, IEmpresaRepository empresaRepository, IWebHostEnvironment environment)
         {
             _mapper = mapper;
             _empresaRepository = empresaRepository;
+            _environment = environment;
         }
 
 
@@ -35,6 +40,25 @@ namespace TFGProject.Controllers
                 var listempresasDto = _mapper.Map<IEnumerable<EmpresaDto>>(listempresas);
 
                 return Ok(listempresasDto);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("empresasTotales")]
+        public async Task<IActionResult> GetTotalEmpresas()
+        {
+            try
+            {
+                var listempresas = await _empresaRepository.GetListEmpresas();
+
+                var listempresasDto = _mapper.Map<IEnumerable<EmpresaDto>>(listempresas);
+
+                return Ok(listempresasDto.Count());
 
             }
             catch (Exception ex)
@@ -126,6 +150,31 @@ namespace TFGProject.Controllers
                 }
 
                 var empresaDto = _mapper.Map<EmpresaDto>(empresa);
+
+                return Ok(empresaDto);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+       
+        [HttpGet("empresaPerfil/{id}")]
+        public async Task<IActionResult> GetPerfilEmpresa(int id)
+        {
+            try
+            {
+                var empresa = await _empresaRepository.GetEmpresa(id);
+
+                if (empresa == null)
+                {
+                    return NotFound();
+                }
+
+                var empresaDto = _mapper.Map<EmpresaPerfilDto>(empresa);
 
                 return Ok(empresaDto);
 
@@ -309,5 +358,26 @@ namespace TFGProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        // en tu controlador de C#
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload(IFormFile image)
+        {
+                // generar un nombre único para la imagen
+                var fileName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
+
+                // guardar la imagen en el sistema de archivos del servidor
+                var filePath = Path.Combine(_environment.WebRootPath,"uploads", fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.CopyToAsync(stream);
+                }
+
+                // devolver la ruta de acceso de la imagen guardada
+                var imagePath = $"/uploads/{fileName}";
+                return Ok(new { imagePath = imagePath });
+        }
+
     }
 }

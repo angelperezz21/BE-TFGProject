@@ -1,6 +1,8 @@
 ﻿
-using iTextSharp.text;
-using iTextSharp.text.pdf;
+//using iTextSharp.text;
+//using iTextSharp.text.pdf;
+
+
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Headers;
@@ -9,8 +11,7 @@ namespace TFGProject.Models.Repository.DonacionR
 {
     public class DonacionRepository : IDonacionRepository
     {
-        private readonly ApplicationDbContext _context;
-
+        private readonly ApplicationDbContext _context;        
         public DonacionRepository(ApplicationDbContext context)
         {
             _context = context;
@@ -36,38 +37,29 @@ namespace TFGProject.Models.Repository.DonacionR
 
         public HttpResponseMessage GenerarPDFCertificado(Donacion donacion)
         {
-            //Document doc = new Document();
 
-            //// Crear un MemoryStream para escribir los bytes del archivo PDF
-            //MemoryStream memStream = new MemoryStream();
 
-            //// Crear un escritor de PDF que escribirá en el MemoryStream
-            //PdfWriter writer = PdfWriter.GetInstance(doc, memStream);
+            //MemoryStream memoryStream = new MemoryStream();
+            //Document doc = new Document(new PdfDocument(new PdfWriter("C:/Users/angel/Desktop/TFG/TFGProject/TFGProject/")));            
 
-            //// Abrir el documento para escribir contenido
-            //doc.Open();
-
-            //// Agregar contenido al documento (por ejemplo, un párrafo de texto)
-            //Paragraph paragraph = new Paragraph("Este es el contenido del archivo PDF que estamos generando.");
-            //doc.Add(paragraph);
-            //doc.Add(paragraph);
-            //doc.Add(paragraph);
-
+            //// Agregar el contenido del certificado de donación
+            //Paragraph paragraph = new Paragraph();
+            //paragraph.Add("Certificado de Donación\n\n");
+            //paragraph.Add($"Donante: {donacion.Empresa.Nombre}\n");
+            //paragraph.Add($"Precio: {donacion.valorTotal}\n");
+            //paragraph.Add($"Fecha: {donacion.FechaDonacion}\n");
+            //paragraph.Add($"Organización beneficiaria: {donacion.Beneficiario.Nombre}\n\n");
+            //paragraph.Add("Gracias por su donación.");
 
             //doc.Add(paragraph);
-            //doc.Add(paragraph);
-
-            //// Cerrar el documento
             //doc.Close();
 
-            //// Obtener los bytes del MemoryStream y devolverlos
-            //byte[] fileBytes = doc.ToArray();
-            //// Crea una respuesta HTTP con el certificado de donación como archivo adjunto
+            // Crear una respuesta HTTP con el archivo PDF como contenido
             HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
-            //response.Content = new ByteArrayContent(fileBytes);
+            //response.Content = new ByteArrayContent(memoryStream.ToArray());
+            //response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
             //response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
             //response.Content.Headers.ContentDisposition.FileName = "CertificadoDonacion.pdf";
-            //response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
 
             return response;
 

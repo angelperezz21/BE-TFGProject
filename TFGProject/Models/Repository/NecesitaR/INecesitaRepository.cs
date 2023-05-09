@@ -12,5 +12,6 @@ namespace TFGProject.Models.Repository.NecesitaR
         Task<Necesita> SolicitarNecesidad(int idNecesita, int idEmpresa);
         Task<Necesita> AceptarNecesidad(int idNecesita, int idEmpresa);
         Task<List<SolicitanteDto>> GetNotificaciones(NecesitaDto necesita);
+        Task<List<Necesita>> GetSolicitudesNecesita(int id);
     }
 }
