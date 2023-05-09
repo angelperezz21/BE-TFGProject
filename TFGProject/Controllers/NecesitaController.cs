@@ -17,11 +17,13 @@ namespace TFGProject.Controllers
 
         private readonly IMapper _mapper;
         private readonly INecesitaRepository _necesitaRepository;
+        private readonly IWebHostEnvironment _environment;
 
-        public NecesitaController(IMapper mapper, INecesitaRepository necesitaRepository)
+        public NecesitaController(IMapper mapper, INecesitaRepository necesitaRepository, IWebHostEnvironment environment)
         {
             _mapper = mapper;
             _necesitaRepository = necesitaRepository;
+            _environment = environment;
         }
 
 
@@ -252,6 +254,23 @@ namespace TFGProject.Controllers
             }
         }
 
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload(IFormFile image)
+        {
+            // generar un nombre único para la imagen
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
+
+            // guardar la imagen en el sistema de archivos del servidor
+            var filePath = Path.Combine(_environment.WebRootPath, "publicaciones", fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            // devolver la ruta de acceso de la imagen guardada
+            var imagePath = $"/publicaciones/{fileName}";
+            return Ok(new { imagePath = imagePath });
+        }
 
 
     }

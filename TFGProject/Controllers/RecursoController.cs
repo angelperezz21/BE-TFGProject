@@ -17,11 +17,13 @@ namespace TFGProject.Controllers
 
         private readonly IMapper _mapper;
         private readonly IRecursoRepository _recursoRepository;
+        private readonly IWebHostEnvironment _environment;
 
-        public RecursoController(IMapper mapper, IRecursoRepository recursoRepository)
+        public RecursoController(IMapper mapper, IRecursoRepository recursoRepository, IWebHostEnvironment environment)
         {
             _mapper = mapper;
             _recursoRepository = recursoRepository;
+            _environment = environment;
         }
 
 
@@ -259,6 +261,23 @@ namespace TFGProject.Controllers
             }
         }
 
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload(IFormFile image)
+        {
+            // generar un nombre único para la imagen
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(image.FileName)}";
+
+            // guardar la imagen en el sistema de archivos del servidor
+            var filePath = Path.Combine(_environment.WebRootPath, "publicaciones", fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            // devolver la ruta de acceso de la imagen guardada
+            var imagePath = $"/publicaciones/{fileName}";
+            return Ok(new { imagePath = imagePath });
+        }
 
     }
 }
