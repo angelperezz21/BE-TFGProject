@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
@@ -75,10 +78,13 @@ namespace TFGProject.Models.Repository.EmpresaR
 
         public async Task<Empresa> AddEmpresa(Empresa empresa)
         {
+
             var existEmpresa = _context.Empresas.FirstOrDefault(b => b.Email == empresa.Email);
             if (existEmpresa != null) return null;
             var existBeneficiario = _context.Beneficiarios.FirstOrDefault(b => b.Email == empresa.Email);
             if (existBeneficiario != null) return null;
+
+            existeEmpresa(empresa.CIF);
 
             empresa.PasswordSinHash = empresa.Contrasenya;
             using (var sha256 = SHA256.Create())
@@ -122,7 +128,7 @@ namespace TFGProject.Models.Repository.EmpresaR
         }
 
         public async Task<List<Empresa>> GetListEmpresas()
-        {
+        {           
             return await _context.Empresas.ToListAsync();
         }
 
@@ -183,5 +189,27 @@ namespace TFGProject.Models.Repository.EmpresaR
             if(existEmpresa!=null) sendEmailRecuperación(existEmpresa);
 
         }
+
+        public bool existeEmpresa(string CIF)
+        {
+
+            IWebDriver driver = new ChromeDriver();            
+            // Navegar a la página web y esperar a que cargue
+            //driver.Navigate().GoToUrl("https://sede.registradores.org/site/mercantil");
+            driver.Url = "https://www.google.com/";
+
+            //driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(10);
+
+            Thread.Sleep(5000);
+            // Encontrar el botón de búsqueda
+            IWebElement searchButton = driver.FindElement(By.XPath("//button[contains(text(),'Buscar')]"));
+
+            // Hacer clic en el botón de búsqueda
+            searchButton.Click();
+
+            driver.Close();
+            
+            return true;
+        }      
     }
 }

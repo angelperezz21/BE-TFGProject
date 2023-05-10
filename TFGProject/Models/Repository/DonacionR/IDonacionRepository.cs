@@ -4,7 +4,7 @@
     {
         Task<List<Donacion>> GetListDonacions();
         Task<Donacion> GetDonacion(int id);
-        Task<Donacion> AddDonacion(Donacion beneficiario, bool cert);
-        HttpResponseMessage GenerarPDFCertificado(Donacion donacion);
+        Task<Donacion> AddDonacion(Donacion beneficiario);
+        Task<string> GenerarPDFCertificado(Donacion donacion, string ruta);
     }
 }

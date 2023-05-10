@@ -13,7 +13,7 @@ namespace TFGProject.Models
         public int Cantidad { get; set; }
         public string MetodoEntrega { get; set; }
         public DateTime FechaCreacionRecurso { get; set; }
-        public bool Certificado { get; set; }
+        public string Descripcion { get; set; }
         public string? imgUrl { get; set; }
         public int IdEmpresa { get; set; }
         public Empresa Empresa { get; set; }

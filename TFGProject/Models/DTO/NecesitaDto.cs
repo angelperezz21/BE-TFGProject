@@ -10,8 +10,7 @@
         public string Descripcion { get; set; }
         public string? imgUrl { get; set; }
         public DateTime? FechaCreacionNecesita { get; set; }
-        public int IdBeneficiario { get; set; }
-        public bool Certificado { get; set; }
+        public int IdBeneficiario { get; set; }        
         public string? Solicitantes { get; set; }
     }
 }

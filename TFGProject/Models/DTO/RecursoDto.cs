@@ -10,8 +10,8 @@
         public string MetodoEntrega { get; set; }
         public int IdEmpresa { get; set; }
         public string? imgUrl { get; set; }
-        public DateTime? FechaCreacionRecurso { get; set; }
-        public bool Certificado { get; set; }
+        public string Descripcion { get; set; }
+        public DateTime? FechaCreacionRecurso { get; set; }        
         public string? Solicitantes { get; set; }
 
     }

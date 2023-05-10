@@ -82,43 +82,9 @@ namespace TFGProject.Controllers
 
             var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
-            var fileName = "CertificadoDonacion" + donacion.IdEmpresa.ToString() + ".pdf";
-            var filePath = Path.Combine(_environment.WebRootPath, "certificados", fileName);
-            Document doc = new Document();
-            MemoryStream memStream = new MemoryStream();
-            PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
-            PdfWriter writer = PdfWriter.GetInstance(doc, memStream);
+            var certificadoPath = _donacionRepository.GenerarPDFCertificado(donacion, _environment.WebRootPath);
 
-            doc.Open();            
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
-
-            doc.Close();
-
-            var certificadoPath = $"certificados/{fileName}";
-
-            return Ok(new {certificadoPath = certificadoPath });
-           
-
-            //return _donacionRepository.GenerarPDFCertificado(donacion);                
-
-
+            return Ok(new {certificadoPath = certificadoPath.Result });
 
 
         }
@@ -158,13 +124,13 @@ namespace TFGProject.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Post(NewDonacionDto newDonacionDto, bool certificado)
+        public async Task<IActionResult> Post(NewDonacionDto newDonacionDto)
         {
             try
             {
                 var donacion = _mapper.Map<Donacion>(newDonacionDto);
 
-                donacion = await _donacionRepository.AddDonacion(donacion, certificado);
+                donacion = await _donacionRepository.AddDonacion(donacion);
 
                 var donacionItemDto = _mapper.Map<DonacionDto>(donacion);
 

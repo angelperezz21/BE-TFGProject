@@ -1,10 +1,13 @@
-﻿
-//using iTextSharp.text;
-//using iTextSharp.text.pdf;
-
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Net;
+using System.Net.Http.Headers;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Net.Http.Headers;
 
 namespace TFGProject.Models.Repository.DonacionR
@@ -17,7 +20,7 @@ namespace TFGProject.Models.Repository.DonacionR
             _context = context;
         }
 
-        public async Task<Donacion> AddDonacion(Donacion donacion, bool cert)
+        public async Task<Donacion> AddDonacion(Donacion donacion)
         {
             _context.Add(donacion);
             await _context.SaveChangesAsync();
@@ -35,33 +38,39 @@ namespace TFGProject.Models.Repository.DonacionR
         }
 
 
-        public HttpResponseMessage GenerarPDFCertificado(Donacion donacion)
+        public async Task<string> GenerarPDFCertificado(Donacion donacion, String ruta)
         {
 
 
-            //MemoryStream memoryStream = new MemoryStream();
-            //Document doc = new Document(new PdfDocument(new PdfWriter("C:/Users/angel/Desktop/TFG/TFGProject/TFGProject/")));            
+            var fileName = "CertificadoDonacion" + donacion.IdEmpresa.ToString() + ".pdf";
+            var filePath = Path.Combine(ruta, "certificados", "CertificadoDonacion.pdf");
+            Document doc = new Document();
+            MemoryStream memStream = new MemoryStream();
+            PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
+            PdfWriter writer = PdfWriter.GetInstance(doc, memStream);
 
-            //// Agregar el contenido del certificado de donación
-            //Paragraph paragraph = new Paragraph();
-            //paragraph.Add("Certificado de Donación\n\n");
-            //paragraph.Add($"Donante: {donacion.Empresa.Nombre}\n");
-            //paragraph.Add($"Precio: {donacion.valorTotal}\n");
-            //paragraph.Add($"Fecha: {donacion.FechaDonacion}\n");
-            //paragraph.Add($"Organización beneficiaria: {donacion.Beneficiario.Nombre}\n\n");
-            //paragraph.Add("Gracias por su donación.");
+            doc.Open();
+            doc.Add(new Paragraph("Hola " + "juan" + ", bienvenido al mundo de iTextSharp."));
 
-            //doc.Add(paragraph);
-            //doc.Close();
+            doc.Close();
 
-            // Crear una respuesta HTTP con el archivo PDF como contenido
-            HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
-            //response.Content = new ByteArrayContent(memoryStream.ToArray());
-            //response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
-            //response.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment");
-            //response.Content.Headers.ContentDisposition.FileName = "CertificadoDonacion.pdf";
+            var empresaPassword = await _context.Empresas.FindAsync(donacion.IdEmpresa);
 
-            return response;
+            string WorkingFolder = ruta + "/certificados/";
+            string InputFile = Path.Combine(WorkingFolder, "CertificadoDonacion.pdf");
+            string OutputFile = Path.Combine(WorkingFolder, "CertificadoDonacion13.pdf");
+
+            using (Stream input = new FileStream(InputFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                using (Stream output = new FileStream(OutputFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    PdfReader reader = new PdfReader(input);
+                    PdfEncryptor.Encrypt(reader, output, true, empresaPassword.PasswordSinHash, "secret", PdfWriter.ALLOW_SCREENREADERS);
+                }
+            }
+            var certificadoPath = $"certificados/{fileName}";
+
+            return certificadoPath;
 
         }
 
