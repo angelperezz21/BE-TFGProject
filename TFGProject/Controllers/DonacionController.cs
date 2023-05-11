@@ -82,6 +82,11 @@ namespace TFGProject.Controllers
 
             var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
+            if (donacion.IdEmpresa.ToString() != userId)
+            {
+                return Unauthorized();
+            }
+
             var certificadoPath = _donacionRepository.GenerarPDFCertificado(donacion, _environment.WebRootPath);
 
             return Ok(new {certificadoPath = certificadoPath.Result });

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using System.Net;
 using System.Net.Mail;
@@ -84,7 +85,10 @@ namespace TFGProject.Models.Repository.EmpresaR
             var existBeneficiario = _context.Beneficiarios.FirstOrDefault(b => b.Email == empresa.Email);
             if (existBeneficiario != null) return null;
 
-            existeEmpresa(empresa.CIF);
+            if (!existeEmpresa(empresa.CIF))
+            {
+                return null;
+            }
 
             empresa.PasswordSinHash = empresa.Contrasenya;
             using (var sha256 = SHA256.Create())
@@ -192,24 +196,76 @@ namespace TFGProject.Models.Repository.EmpresaR
 
         public bool existeEmpresa(string CIF)
         {
+            EdgeOptions options = new EdgeOptions();
 
-            IWebDriver driver = new ChromeDriver();            
-            // Navegar a la página web y esperar a que cargue
-            //driver.Navigate().GoToUrl("https://sede.registradores.org/site/mercantil");
-            driver.Url = "https://www.google.com/";
+            options.AddArgument("--headless");
+            options.AddArgument("--start-maximized");
 
-            //driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(10);
+            EdgeDriver driver = new EdgeDriver(options);
 
-            Thread.Sleep(5000);
-            // Encontrar el botón de búsqueda
-            IWebElement searchButton = driver.FindElement(By.XPath("//button[contains(text(),'Buscar')]"));
 
-            // Hacer clic en el botón de búsqueda
-            searchButton.Click();
+            driver.Navigate().GoToUrl("https://sede.registradores.org/site/mercantil");
+
+            IWebElement cookies = driver.FindElement(By.Id("closeCookiesInfo"));
+
+            cookies.Click();
+
+            IWebElement botonBuscar = driver.FindElement(By.LinkText("Buscar por sociedad"));
+
+            botonBuscar.Click();
+
+
+            IWebElement divEliminar = driver.FindElement(By.Id("captcha-0"));
+
+            driver.ExecuteScript("arguments[0].remove();", divEliminar);
+
+
+            divEliminar = driver.FindElement(By.Id("ccode"));
+            driver.ExecuteScript("arguments[0].remove();", divEliminar);
+
+            IWebElement radioButton = driver.FindElement(By.Id("tipoIdMerc1"));
+            IJavaScriptExecutor jsExecutor = (IJavaScriptExecutor)driver;
+            jsExecutor.ExecuteScript("arguments[0].checked = true;", radioButton);
+
+            IWebElement boton = driver.FindElement(By.CssSelector("button[data-qa='buscarMercSubmit']"));
+
+            IWebElement element = driver.FindElement(By.Id("terminoBusquedaMerc"));
+            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+
+            js.ExecuteScript("arguments[0].dataset.validationLength='4-15';", element);
+            js.ExecuteScript("arguments[0].classList.remove('disable');", element);
+            js.ExecuteScript("arguments[0].className = arguments[0].className.replace('error', 'valid');", element);
+            js.ExecuteScript("arguments[0].maxlength= '15';", element);
+            js.ExecuteScript("arguments[0].dataset.validationHasKeyupEvent = true;", element);
+            js.ExecuteScript("arguments[0].dataset.validationErrorLength = 'NIF debe tener entre 4 y 15 caracteres'", element);
+            js.ExecuteScript("arguments[0].dataset.validationHasKeyupEvent= true;", element);
+            js.ExecuteScript("arguments[0].value = 'A46050217';", element);
+            js.ExecuteScript("arguments[0].textContent =  'Valencia Club De Futbol';", element);
+
+            ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].removeAttribute('disabled')", boton);
+            ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].classList.remove('btn--disabled')", boton);
+
+            System.Threading.Thread.Sleep(5000);
+
+            
+
+
+            //cookies = driver.FindElement(By.Id("closeCookiesInfo"));
+
+            //cookies.Click();
+
+            boton.Click();
+
+            IWebElement spanElement = driver.FindElement(By.CssSelector("span[data-qa='nResultados']"));
+
+            string text = spanElement.Text;
 
             driver.Close();
-            
+
+            if (text == "0") return false;
+
             return true;
+            
         }      
     }
 }

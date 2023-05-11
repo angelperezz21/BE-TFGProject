@@ -223,7 +223,6 @@ namespace TFGProject.Controllers
                 var empresa = _mapper.Map<Empresa>(empresaDto);
 
                 empresa = await _empresaRepository.AddEmpresa(empresa);
-
                 
 
                 return Ok(empresaDto);
