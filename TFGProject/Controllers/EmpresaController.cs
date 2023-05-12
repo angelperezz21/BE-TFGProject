@@ -37,7 +37,7 @@ namespace TFGProject.Controllers
             {
                 var listempresas = await _empresaRepository.GetListEmpresas();
 
-                var listempresasDto = _mapper.Map<IEnumerable<EmpresaDto>>(listempresas);
+                var listempresasDto = _mapper.Map<IEnumerable<EmpresaPerfilDto>>(listempresas);
 
                 return Ok(listempresasDto);
 
@@ -56,7 +56,7 @@ namespace TFGProject.Controllers
             {
                 var listempresas = await _empresaRepository.GetListEmpresas();
 
-                var listempresasDto = _mapper.Map<IEnumerable<EmpresaDto>>(listempresas);
+                var listempresasDto = _mapper.Map<IEnumerable<EmpresaPerfilDto>>(listempresas);
 
                 return Ok(listempresasDto.Count());
 

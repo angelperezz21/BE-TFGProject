@@ -34,7 +34,7 @@ namespace TFGProject.Controllers
             {
                 var listbeneficiarios = await _beneficiarioRepository.GetListBeneficiarios();
 
-                var listbeneficiariosDto = _mapper.Map<IEnumerable<BeneficiarioDto>>(listbeneficiarios);
+                var listbeneficiariosDto = _mapper.Map<IEnumerable<BeneficiarioPerfilDto>>(listbeneficiarios);
 
                 return Ok(listbeneficiariosDto);
 
@@ -54,7 +54,7 @@ namespace TFGProject.Controllers
             {
                 var listbeneficiarios = await _beneficiarioRepository.GetListBeneficiarios();
 
-                var listbeneficiariosDto = _mapper.Map<IEnumerable<BeneficiarioDto>>(listbeneficiarios);
+                var listbeneficiariosDto = _mapper.Map<IEnumerable<BeneficiarioPerfilDto>>(listbeneficiarios);
 
                 return Ok(listbeneficiariosDto.Count());
 
