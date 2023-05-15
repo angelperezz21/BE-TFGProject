@@ -144,7 +144,11 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             List<Donacion> donaciones = new List<Donacion>();
             foreach (var donacion in beneficiario.Donaciones.ToList())
             {
-                if (donacion.Enviada == true && donacion.Recibida == true) donaciones.Add(donacion);
+                if (donacion.Enviada == true && donacion.Recibida == true)
+                {
+                    donacion.Empresa = await _context.Empresas.FindAsync(donacion.IdEmpresa);
+                    donaciones.Add(donacion);
+                }
             }
             return donaciones;
         }
@@ -155,7 +159,11 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             List<Donacion> donaciones = new List<Donacion>();
             foreach (var donacion in beneficiario.Donaciones.ToList())
             {
-                if (donacion.Enviada == false || donacion.Recibida == false) donaciones.Add(donacion);
+                if (donacion.Enviada == false || donacion.Recibida == false)
+                {
+                    donacion.Empresa = await _context.Empresas.FindAsync(donacion.IdEmpresa);
+                    donaciones.Add(donacion);
+                }
             }
             return donaciones;
         }

@@ -83,6 +83,7 @@ namespace TFGProject.Models.Repository.RecursoR
             var empresa = await _context.Empresas.FindAsync(recurso.IdEmpresa);            
 
             var beneficiario = await _context.Beneficiarios.FindAsync(idBeneficiario);
+            beneficiario.Notificacion++;
 
             sendAceptarEmail(empresa, beneficiario);
 

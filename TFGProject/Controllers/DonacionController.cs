@@ -127,19 +127,29 @@ namespace TFGProject.Controllers
             }
         }
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Post(NewDonacionDto newDonacionDto)
+        [Authorize(Roles ="Empresa")]
+        [HttpPut("envioDonacion/{id}")]
+        public async Task<IActionResult> envioDonacion(int id)
         {
             try
             {
-                var donacion = _mapper.Map<Donacion>(newDonacionDto);
+                var donacion = await _donacionRepository.GetDonacion(id);
 
-                donacion = await _donacionRepository.AddDonacion(donacion);
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
 
-                var donacionItemDto = _mapper.Map<DonacionDto>(donacion);
+                if (donacion.IdEmpresa.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
 
-                return Ok(donacionItemDto);
+                donacion = await _donacionRepository.UpdateEnvioDonacion(id);
+
+                if (donacion == null)
+                {
+                    return BadRequest("Ya esta enviada la donación.");
+                }
+
+                return Ok();
 
             }
             catch (Exception ex)
@@ -147,6 +157,38 @@ namespace TFGProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
+        [Authorize(Roles = "Beneficiario")]
+        [HttpPut("recibirDonacion/{id}")]
+        public async Task<IActionResult> recibirDonacion(int id)
+        {
+            try
+            {
+                var donacion = await _donacionRepository.GetDonacion(id);
+
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (donacion.IdBeneficiario.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+                donacion = await _donacionRepository.UpdateRecibirDonacion(id);
+
+                if (donacion == null)
+                {
+                    return BadRequest("Donación ya recibida o no enviada.");
+                }
+                
+
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }
