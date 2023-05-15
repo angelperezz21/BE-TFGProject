@@ -140,8 +140,24 @@ namespace TFGProject.Models.Repository.BeneficiarioR
 
         public async Task<List<Donacion>> GetListDonaciones(int id)
         {
-            var empresa = await _context.Beneficiarios.Include(x => x.Donaciones).FirstOrDefaultAsync(x => x.Id == id);
-            return empresa.Donaciones.ToList();
+            var beneficiario = await _context.Beneficiarios.Include(x => x.Donaciones).FirstOrDefaultAsync(x => x.Id == id);
+            List<Donacion> donaciones = new List<Donacion>();
+            foreach (var donacion in beneficiario.Donaciones.ToList())
+            {
+                if (donacion.Enviada == true && donacion.Recibida == true) donaciones.Add(donacion);
+            }
+            return donaciones;
+        }
+
+        public async Task<List<Donacion>> GetListDonacionesPendientes(int id)
+        {
+            var beneficiario = await _context.Beneficiarios.Include(x => x.Donaciones).FirstOrDefaultAsync(x => x.Id == id);
+            List<Donacion> donaciones = new List<Donacion>();
+            foreach (var donacion in beneficiario.Donaciones.ToList())
+            {
+                if (donacion.Enviada == false || donacion.Recibida == false) donaciones.Add(donacion);
+            }
+            return donaciones;
         }
 
         public async Task<Beneficiario> GetBeneficiario(int id)

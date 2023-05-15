@@ -212,12 +212,12 @@ namespace TFGProject.Controllers
 
         [Authorize(Roles = "Beneficiario")]
         [HttpPut("aceptarNecesidad/{id}")]
-        public async Task<IActionResult> AceptarRecurso(int idNecesita, int idEmpresa)
+        public async Task<IActionResult> AceptarNecesidad([FromBody] EstadoNecesitaDto estadoNecesita)
         {
             try
             {
-                var recurso = await _necesitaRepository.AceptarNecesidad(idNecesita, idEmpresa);
-                if (recurso == null) return StatusCode(409, "No se puede actualizar la necesidad");
+                var necesidad = await _necesitaRepository.AceptarNecesidad(estadoNecesita.idNecesidad, estadoNecesita.idEmpresa);
+                if (necesidad == null) return StatusCode(409, "No se puede actualizar la necesidad");
                 return Ok();
 
             }
@@ -226,6 +226,23 @@ namespace TFGProject.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        //[Authorize(Roles = "Beneficiario")]
+        //[HttpPut("recepcionNecesidad/{id}")]
+        //public async Task<IActionResult> RecepcionNecesidad([FromBody] EstadoNecesitaDto estadoNecesita)
+        //{
+        //    try
+        //    {
+        //        //var recurso = await _necesitaRepository.AceptarNecesidad(estadoNecesita.idNecesidad, estadoNecesita.idEmpresa);
+        //        if (necesidad == null) return StatusCode(409, "No se puede actualizar la necesidad");
+        //        return Ok();
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
         [Authorize(Roles = "Beneficiario")]
         [HttpGet("GetNotificaciones/{id}")]

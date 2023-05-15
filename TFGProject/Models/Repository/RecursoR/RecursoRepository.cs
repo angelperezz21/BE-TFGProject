@@ -17,7 +17,7 @@ namespace TFGProject.Models.Repository.RecursoR
         public async Task<Recurso> AddRecurso(Recurso recurso)
         {
             recurso.FechaCreacionRecurso = DateTime.Now;
-            _context.Add(recurso);
+            _context.Add(recurso);            
             await _context.SaveChangesAsync();
             return recurso;
         }
@@ -85,7 +85,22 @@ namespace TFGProject.Models.Repository.RecursoR
             var beneficiario = await _context.Beneficiarios.FindAsync(idBeneficiario);
 
             sendAceptarEmail(empresa, beneficiario);
+
+            _context.Add(new Donacion
+            {
+                FechaDonacion = DateTime.Now,
+                IdBeneficiario = idBeneficiario,
+                IdEmpresa = recurso.IdEmpresa,
+                Cantidad = recurso.Cantidad,
+                valorTotal = recurso.Cantidad * recurso.Precio,
+                MetodoEntrega = recurso.MetodoEntrega,
+                NombreRecurso = recurso.Nombre
+            });
+
             await _context.SaveChangesAsync();
+
+            sendComunicarEB(empresa, beneficiario);
+
             return recurso;
         }
 
@@ -96,7 +111,7 @@ namespace TFGProject.Models.Repository.RecursoR
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
-            message.Subject = "Bienvenido a EasyDonation";
+            message.Subject = "Solicitar recurso";
             message.To.Add(new MailAddress(empresa.Email));
             message.Body = "<html><body><h1>Notifiación por solicitud de recurso</h1><p>Hola "
                 + empresa.Nombre +
@@ -122,11 +137,40 @@ namespace TFGProject.Models.Repository.RecursoR
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
-            message.Subject = "Bienvenido a EasyDonation";
+            message.Subject = "Aceptar recurso";
             message.To.Add(new MailAddress(beneficiario.Email));
             message.Body = "<html><body><h1>Notifiación por aceptación de recurso</h1><p>Hola "
                 + beneficiario.Nombre +
                 ",</p><p>La empresa </p>" + empresa.Nombre + "<p> ha aceptado la solicitud del recurso solicitado.</p> " +
+                "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
+
+            message.IsBodyHtml = true;
+
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential(fromMail, fromPassword),
+                EnableSsl = true,
+            };
+
+            smtpClient.Send(message);
+        }
+
+        public void sendComunicarEB(Empresa empresa, Beneficiario beneficiario)
+        {
+            string fromMail = "easyDonatioORG@gmail.com";
+            string fromPassword = "zcybiotsmdqhoxds";
+
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(fromMail);
+            message.Subject = "Donación";
+            message.To.Add(new MailAddress(empresa.Email));
+            message.To.Add(new MailAddress(beneficiario.Email));
+            message.Body = "<html><body><h1>Notifiación por creación de la doanción</h1><p>Hola "
+                + empresa.Nombre + " y " + beneficiario.Nombre +
+                "<p>se ha creado la donación, para comunicaros con entre vosotros se os adjuntan vuestros correos y teléfonos.</p>" +
+                "<p>Correo: " + beneficiario.Email + " Teléfono: " + beneficiario.Contacto + ".</p>" +
+                "<p>Correo: " + empresa.Email + " Teléfono: " + empresa.Contacto + ".</p>" +
                 "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
 
             message.IsBodyHtml = true;

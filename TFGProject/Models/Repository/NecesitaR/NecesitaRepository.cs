@@ -88,7 +88,22 @@ namespace TFGProject.Models.Repository.NecesitaR
             var empresa = await _context.Empresas.FindAsync(idEmpresa);
 
             sendAceptarEmail(empresa, beneficiario);
+
+            _context.Add(new Donacion
+            {
+                FechaDonacion = DateTime.Now,
+                IdBeneficiario = necesita.IdBeneficiario,
+                IdEmpresa = idEmpresa,
+                Cantidad = necesita.Cantidad,
+                valorTotal = necesita.Cantidad * necesita.Precio,
+                MetodoEntrega = necesita.MetodoEntrega,
+                NombreRecurso = necesita.Nombre
+            });
+
             await _context.SaveChangesAsync();
+
+            sendComunicarEB(empresa,beneficiario);
+
             return necesita;
         }
 
@@ -100,7 +115,7 @@ namespace TFGProject.Models.Repository.NecesitaR
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
-            message.Subject = "Bienvenido a EasyDonation";
+            message.Subject = "Solicitud Necesidad";
             message.To.Add(new MailAddress(beneficiario.Email));
             message.Body = "<html><body><h1>Notifiación por solicitud de necesidad</h1><p>Hola "
                 + beneficiario.Nombre +
@@ -126,11 +141,13 @@ namespace TFGProject.Models.Repository.NecesitaR
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
-            message.Subject = "Bienvenido a EasyDonation";
+            message.Subject = "Aceptar Necesidad";
             message.To.Add(new MailAddress(empresa.Email));
             message.Body = "<html><body><h1>Notifiación por aceptación de necesidad</h1><p>Hola "
                 + empresa.Nombre +
                 ",</p><p>El beneficiario </p>" + beneficiario.Nombre + "<p> ha aceptado la solicitud de la necesidad solicitado y se va a proceder a realizar la donación.</p> " +
+                "<p>A continuación, deberás confirmar el envió de la donación desde el apartado en tu perfil y una vez el " +
+                "beneficiario la reciba podrás acceder a su información.</p>" + 
                 "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
 
             message.IsBodyHtml = true;
@@ -143,6 +160,35 @@ namespace TFGProject.Models.Repository.NecesitaR
             };
 
             smtpClient.Send(message);
+        }
+
+        public void sendComunicarEB(Empresa empresa, Beneficiario beneficiario)
+        {
+            string fromMail = "easyDonatioORG@gmail.com";
+            string fromPassword = "zcybiotsmdqhoxds";
+
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(fromMail);
+            message.Subject = "Donación";
+            message.To.Add(new MailAddress(empresa.Email));
+            message.To.Add(new MailAddress(beneficiario.Email));
+            message.Body = "<html><body><h1>Notifiación por creación de la doanción</h1><p>Hola "
+                + empresa.Nombre + " y "+ beneficiario.Nombre +
+                "<p>se ha creado la donación, para comunicaros con entre vosotros se os adjuntan vuestros correos y teléfonos.</p>" +
+                "<p>Correo: " +beneficiario.Email + " Teléfono: " + beneficiario.Contacto + ".</p>" +
+                "<p>Correo: " + empresa.Email + " Teléfono: " + empresa.Contacto + ".</p>" +
+                "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
+
+            message.IsBodyHtml = true;
+
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential(fromMail, fromPassword),
+                EnableSsl = true,
+            };
+
+            smtpClient.Send(message);            
         }
 
         public async Task<List<SolicitanteDto>> GetNotificaciones(NecesitaDto necesita)

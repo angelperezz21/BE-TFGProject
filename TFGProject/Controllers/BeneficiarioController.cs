@@ -129,6 +129,41 @@ namespace TFGProject.Controllers
         }
 
         [Authorize(Roles = "Beneficiario")]
+        [HttpGet("listaDonacionesPendientes/{id}")]
+        public async Task<IActionResult> GetListaDonacionesPendientes(int id)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (id.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+                var beneficiario = await _beneficiarioRepository.GetBeneficiario(id);
+
+                if (beneficiario == null)
+                {
+                    return NotFound();
+                }
+
+                var donaciones = await _beneficiarioRepository.GetListDonacionesPendientes(id);
+
+                var listaDonacionesDto = _mapper.Map<IEnumerable<NewDonacionDto>>(donaciones);
+
+                return Ok(listaDonacionesDto);
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [Authorize(Roles = "Beneficiario")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBeneficiario(int id)
         {

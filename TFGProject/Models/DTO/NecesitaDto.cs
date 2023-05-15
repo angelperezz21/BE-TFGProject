@@ -7,6 +7,7 @@
         public string Nombre { get; set; }
         public double Precio { get; set; }
         public int Cantidad { get; set; }
+        public string MetodoEntrega { get; set; }
         public string Descripcion { get; set; }
         public string? imgUrl { get; set; }
         public DateTime? FechaCreacionNecesita { get; set; }

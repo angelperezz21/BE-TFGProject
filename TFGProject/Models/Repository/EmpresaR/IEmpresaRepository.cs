@@ -7,6 +7,7 @@ namespace TFGProject.Models.Repository.EmpresaR
         Task<List<Empresa>> GetListEmpresas();
         Task<Empresa> GetEmpresa(int id);
         Task<List<Donacion>> GetListDonaciones(int id);
+        Task<List<Donacion>> GetListDonacionesPendientes(int id);
         Task DeleteEmpresa(Empresa empresa);
         Task<Empresa> AddEmpresa(Empresa empresa);
         Task UpdateEmpresa(EmpresaDto empresa, int id);

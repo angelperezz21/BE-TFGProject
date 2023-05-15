@@ -149,7 +149,23 @@ namespace TFGProject.Models.Repository.EmpresaR
         public async Task<List<Donacion>> GetListDonaciones(int id)
         {
             var empresa = await _context.Empresas.Include(x=>x.Donaciones).FirstOrDefaultAsync(x=>x.Id==id);
-            return empresa.Donaciones.ToList();
+            List<Donacion> donaciones = new List<Donacion>();
+            foreach(var donacion in empresa.Donaciones.ToList())
+            {
+                if (donacion.Enviada == true && donacion.Recibida == true) donaciones.Add(donacion);
+            }
+            return donaciones;
+        }
+
+        public async Task<List<Donacion>> GetListDonacionesPendientes(int id)
+        {
+            var empresa = await _context.Empresas.Include(x => x.Donaciones).FirstOrDefaultAsync(x => x.Id == id);
+            List<Donacion> donaciones = new List<Donacion>();
+            foreach (var donacion in empresa.Donaciones.ToList())
+            {
+                if (donacion.Enviada == false || donacion.Recibida == false) donaciones.Add(donacion);
+            }
+            return donaciones;
         }
 
         public async Task<Empresa> GetEmpresa(int id)

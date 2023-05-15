@@ -2,12 +2,11 @@
 {
     public class NewDonacionDto
     {
-        public double valorTotal { get; set; }
-        public int Cantidad { get; set; }
-        public DateTime FechaDonacion { get; set; }
-        public string MetodoEntrega { get; set; }
+        public int Id { get; set; }
+        public string NombreRecurso { get; set; }
+        public bool Enviada { get; set; }
+        public bool Recibida { get; set; }
         public int IdEmpresa { get; set; }
         public int IdBeneficiario { get; set; }
-
     }
 }
