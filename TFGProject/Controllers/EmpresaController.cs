@@ -254,17 +254,32 @@ namespace TFGProject.Controllers
         {
             try
             {
+
                 var empresa = _mapper.Map<Empresa>(empresaDto);
 
+                if (_empresaRepository.CheckCIF(empresa.CIF))
+                {
+                    return BadRequest("El CIF introducido ya esta en nuestro sistema");
+                }
+
+                if (!_empresaRepository.ExisteEmpresa(empresa.CIF))
+                {
+                    return BadRequest("El CIF introducido no existe");
+                }             
+
                 empresa = await _empresaRepository.AddEmpresa(empresa);
-                
+
+                if (empresa==null)
+                {
+                    return BadRequest("Ya existe un usuario con ese correo");
+                }
 
                 return Ok(empresaDto);
 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("El CIF intoducido no existe");
             }
         }
 

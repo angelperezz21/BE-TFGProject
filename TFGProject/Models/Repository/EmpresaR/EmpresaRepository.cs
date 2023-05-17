@@ -77,6 +77,7 @@ namespace TFGProject.Models.Repository.EmpresaR
             smtpClient.Send(message);
         }
 
+
         public async Task<Empresa> AddEmpresa(Empresa empresa)
         {
 
@@ -84,11 +85,6 @@ namespace TFGProject.Models.Repository.EmpresaR
             if (existEmpresa != null) return null;
             var existBeneficiario = _context.Beneficiarios.FirstOrDefault(b => b.Email == empresa.Email);
             if (existBeneficiario != null) return null;
-
-            if (!existeEmpresa(empresa.CIF))
-            {
-                return null;
-            }
 
             empresa.PasswordSinHash = empresa.Contrasenya;
             using (var sha256 = SHA256.Create())
@@ -102,6 +98,15 @@ namespace TFGProject.Models.Repository.EmpresaR
             await _context.SaveChangesAsync();
             return empresa;
         }
+
+        public bool CheckCIF(string CIF)
+        {
+            var existEmpresa = _context.Empresas.FirstOrDefault(b => b.CIF == CIF);
+            if (existEmpresa != null) return true;
+            return false;
+        }
+
+
         public async Task NuevoSeguido(int idBeneficiario,int idEmpresa)
         {
             var empresa = await _context.Empresas.FindAsync(idEmpresa);
@@ -218,12 +223,12 @@ namespace TFGProject.Models.Repository.EmpresaR
 
         }
 
-        public bool existeEmpresa(string CIF)
+        public bool ExisteEmpresa(string CIF)
         {
             EdgeOptions options = new EdgeOptions();
 
-            options.AddArgument("--headless");
-            options.AddArgument("--start-maximized");
+            //options.AddArgument("--headless");
+            //options.AddArgument("--start-maximized");
 
             EdgeDriver driver = new EdgeDriver(options);
 
@@ -263,7 +268,7 @@ namespace TFGProject.Models.Repository.EmpresaR
             js.ExecuteScript("arguments[0].dataset.validationHasKeyupEvent = true;", element);
             js.ExecuteScript("arguments[0].dataset.validationErrorLength = 'NIF debe tener entre 4 y 15 caracteres'", element);
             js.ExecuteScript("arguments[0].dataset.validationHasKeyupEvent= true;", element);
-            js.ExecuteScript("arguments[0].value = 'A46050217';", element);
+            js.ExecuteScript("arguments[0].value =  '" + CIF + "';", element);
             js.ExecuteScript("arguments[0].textContent =  'Valencia Club De Futbol';", element);
 
             ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].removeAttribute('disabled')", boton);
@@ -271,25 +276,20 @@ namespace TFGProject.Models.Repository.EmpresaR
 
             System.Threading.Thread.Sleep(5000);
 
-            
-
-
-            //cookies = driver.FindElement(By.Id("closeCookiesInfo"));
-
-            //cookies.Click();
-
             boton.Click();
 
-            IWebElement spanElement = driver.FindElement(By.CssSelector("span[data-qa='nResultados']"));
+            IWebElement tdElement = driver.FindElement(By.CssSelector("td[data-qa='resultNif1']"));
 
-            string text = spanElement.Text;
+            string spanText = tdElement.FindElement(By.TagName("span")).Text;
 
             driver.Close();
 
-            if (text == "0") return false;
+            if (spanText != CIF) return false;
 
             return true;
             
-        }      
+        }
+
+ 
     }
 }

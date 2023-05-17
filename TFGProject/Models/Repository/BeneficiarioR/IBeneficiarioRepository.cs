@@ -15,5 +15,7 @@ namespace TFGProject.Models.Repository.BeneficiarioR
         Task NuevoSeguido(int idBeneficiario, int idEmpresa);
         Task UnfollowSeguido(int idBeneficiario, int idEmpresa);
         Task GetContrasenya(string email);
+        public bool ExisteBeneficiario(Beneficiario beneficiario);
+        bool CheckCIF(string CIF);
     }
 }

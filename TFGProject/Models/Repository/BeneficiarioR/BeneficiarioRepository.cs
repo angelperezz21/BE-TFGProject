@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Edge;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography;
@@ -90,6 +92,13 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             sendEmail(beneficiario);
             await _context.SaveChangesAsync();
             return beneficiario;
+        }
+
+        public bool CheckCIF(string CIF)
+        {
+            var existBeneficiario = _context.Beneficiarios.FirstOrDefault(b => b.CIF == CIF);
+            if (existBeneficiario != null) return true;
+            return false;
         }
 
         public async Task NuevoSeguido(int idBeneficiario, int idEmpresa)
@@ -196,6 +205,7 @@ namespace TFGProject.Models.Repository.BeneficiarioR
                 if (beneficiario.Contacto != beneficiarioItem.Contacto) beneficiarioItem.Contacto = beneficiario.Contacto;
                 if (beneficiario.Categoria != beneficiarioItem.Categoria) beneficiarioItem.Categoria = beneficiario.Categoria;
                 if (beneficiario.Notificacion != beneficiarioItem.Notificacion) beneficiarioItem.Notificacion = beneficiario.Notificacion;
+                if (beneficiario.imgUrl != beneficiarioItem.imgUrl) beneficiarioItem.imgUrl = beneficiario.imgUrl;
 
                 await _context.SaveChangesAsync();
             }
@@ -206,6 +216,55 @@ namespace TFGProject.Models.Repository.BeneficiarioR
         {
             var existBeneficiario = await _context.Beneficiarios.FirstOrDefaultAsync(b => b.Email == email);
             if(existBeneficiario != null) sendEmailRecuperación(existBeneficiario);
+
+        }
+
+
+        public bool ExisteBeneficiario(Beneficiario beneficiario)
+        {
+            EdgeOptions options = new EdgeOptions();
+
+            options.AddArgument("--headless");
+            options.AddArgument("--start-maximized");
+
+            EdgeDriver driver = new EdgeDriver(options);
+
+
+            driver.Navigate().GoToUrl("https://www.dateas.com/es/explore/search?entity_name=asociaciones-organizaciones-espana");
+
+            IWebElement campoEntrada = driver.FindElement(By.Id("mainfield"));            
+            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+
+            js.ExecuteScript("arguments[0].value = 'Caritas';", campoEntrada);
+
+
+            //class=button-red-large button-centered
+            IWebElement boton = driver.FindElement(By.CssSelector(".button-red-large.button-centered"));
+
+            boton.Click();
+
+            IWebElement tabla = driver.FindElement(By.CssSelector("tbody"));
+
+            // Encontrar la primera fila de la tabla
+            IWebElement primeraFila = tabla.FindElement(By.CssSelector("tr"));
+
+            // Encontrar el enlace de la organización en la primera fila
+            IWebElement enlaceOrganizacion = primeraFila.FindElement(By.CssSelector("td[data-label='Organización'] a"));
+
+            driver.Navigate().GoToUrl(enlaceOrganizacion.GetAttribute("href"));
+            // Obtener el texto del enlace para obtener el nombre de la primera organización
+            IWebElement filaCif = driver.FindElement(By.XPath("//tr[th='Cif']"));
+
+            // Obtener el texto de la columna CIF
+            string cif = filaCif.FindElement(By.XPath("td")).Text;
+
+            driver.Close();
+
+            if (cif != beneficiario.CIF) return false;
+
+            return true;
+
+
 
         }
     }

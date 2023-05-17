@@ -257,9 +257,25 @@ namespace TFGProject.Controllers
             {
                 var beneficiario = _mapper.Map<Beneficiario>(beneficiarioDto);
 
+                ;
+                if (_beneficiarioRepository.CheckCIF(beneficiario.CIF))
+                {
+                    return BadRequest("El CIF introducido ya esta en nuestro sistema");
+                }
+
+                if (!_beneficiarioRepository.ExisteBeneficiario(beneficiario))
+                {
+                    return BadRequest("El CIF introducido no existe");
+                }
+
+
                 beneficiario = await _beneficiarioRepository.AddBeneficiario(beneficiario);
 
-               
+                if (beneficiario == null)
+                {
+                    return BadRequest("Ya existe un usuario con ese correo");
+                }
+
                 return Ok(beneficiarioDto);
 
             }
