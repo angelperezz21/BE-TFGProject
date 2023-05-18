@@ -163,6 +163,37 @@ namespace TFGProject.Controllers
             }
         }
 
+
+        [Authorize(Roles = "Beneficiario")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromBody] NecesitaDto necesitaDto)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (necesitaDto.IdBeneficiario.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+                var recursoItem = await _necesitaRepository.GetNecesita((int)necesitaDto.Id);
+
+                if (recursoItem == null)
+                {
+                    return NotFound();
+                }
+
+                await _necesitaRepository.UpdateNecesita(necesitaDto, (int)necesitaDto.Id);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [Authorize(Roles = "Beneficiario")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]  NecesitaDto necesitaDto)

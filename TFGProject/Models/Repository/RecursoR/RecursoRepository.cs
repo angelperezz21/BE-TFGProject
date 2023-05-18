@@ -188,7 +188,7 @@ namespace TFGProject.Models.Repository.RecursoR
 
         public async Task<List<SolicitanteDto>> GetNotificaciones(RecursoDto recurso)
         {
-            var listSolicitantes = recurso.Solicitantes.Split(',', StringSplitOptions.RemoveEmptyEntries)
+            var listSolicitantes = recurso.Solicitantes?.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                           .Select(x => int.Parse(x))
                                           .ToList();
 
@@ -222,6 +222,23 @@ namespace TFGProject.Models.Repository.RecursoR
                 }
             }
             return listRecursos;
+        }
+
+        public async Task UpdateRecurso(RecursoDto recursoDto, int id)
+        {
+            var recursoItem = await _context.Recursos.FirstOrDefaultAsync(x => x.Id == id);
+            
+            if (recursoItem != null)
+            {
+                if (recursoDto.Precio != recursoItem.Precio) recursoItem.Precio = recursoDto.Precio;
+                if (recursoDto.Descripcion != recursoItem.Descripcion) recursoItem.Descripcion = recursoDto.Descripcion;
+                if (recursoDto.Nombre != recursoItem.Nombre) recursoItem.Nombre = recursoDto.Nombre;
+                if (recursoDto.Cantidad != recursoItem.Cantidad) recursoItem.Cantidad = recursoDto.Cantidad;
+                if (recursoDto.MetodoEntrega != recursoItem.MetodoEntrega) recursoItem.MetodoEntrega = recursoDto.MetodoEntrega;
+                if (recursoDto.imgUrl != recursoItem.imgUrl) recursoItem.imgUrl = recursoDto.imgUrl;
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

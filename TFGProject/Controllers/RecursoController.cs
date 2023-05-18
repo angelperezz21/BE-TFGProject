@@ -172,6 +172,37 @@ namespace TFGProject.Controllers
             }
         }
 
+
+        [Authorize(Roles = "Empresa")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromBody] RecursoDto recursoDto)
+        {
+            try
+            {
+                var userId = HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
+
+                if (recursoDto.IdEmpresa.ToString() != userId)
+                {
+                    return Unauthorized();
+                }
+
+                var recursoItem = await _recursoRepository.GetRecurso((int)recursoDto.Id);
+
+                if (recursoItem == null)
+                {
+                    return NotFound();
+                }
+
+                await _recursoRepository.UpdateRecurso(recursoDto, (int)recursoDto.Id);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [Authorize(Roles = "Empresa")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RecursoDto recursoDto)

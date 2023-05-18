@@ -194,7 +194,7 @@ namespace TFGProject.Models.Repository.NecesitaR
 
         public async Task<List<SolicitanteDto>> GetNotificaciones(NecesitaDto necesita)
         {
-            var listSolicitantes = necesita.Solicitantes.Split(',', StringSplitOptions.RemoveEmptyEntries)
+            var listSolicitantes = necesita.Solicitantes?.Split(',', StringSplitOptions.RemoveEmptyEntries)
                                           .Select(x => int.Parse(x))
                                           .ToList();
 
@@ -228,6 +228,23 @@ namespace TFGProject.Models.Repository.NecesitaR
                 }
             }
             return listNecesitas;
+        }
+
+        public async Task UpdateNecesita(NecesitaDto necesitaDto, int id)
+        {
+            var necesitaItem = await _context.Necesidades.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (necesitaItem != null)
+            {
+                if (necesitaDto.Precio != necesitaItem.Precio) necesitaItem.Precio = necesitaDto.Precio;
+                if (necesitaDto.Descripcion != necesitaItem.Descripcion) necesitaItem.Descripcion = necesitaDto.Descripcion;
+                if (necesitaDto.Nombre != necesitaItem.Nombre) necesitaItem.Nombre = necesitaDto.Nombre;
+                if (necesitaDto.Cantidad != necesitaItem.Cantidad) necesitaItem.Cantidad = necesitaDto.Cantidad;
+                if (necesitaDto.MetodoEntrega != necesitaItem.MetodoEntrega) necesitaItem.MetodoEntrega = necesitaDto.MetodoEntrega;
+                if (necesitaDto.imgUrl != necesitaItem.imgUrl) necesitaItem.imgUrl = necesitaDto.imgUrl;
+
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
