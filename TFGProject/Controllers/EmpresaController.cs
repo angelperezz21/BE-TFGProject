@@ -279,7 +279,7 @@ namespace TFGProject.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("El CIF intoducido no existe");
+                return BadRequest(ex.Message);
             }
         }
 
