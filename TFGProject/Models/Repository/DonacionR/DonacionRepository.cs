@@ -127,7 +127,7 @@ namespace TFGProject.Models.Repository.DonacionR
 
             string WorkingFolder = ruta + "/certificados/";
             string InputFile = Path.Combine(WorkingFolder, "CertificadoDonacion.pdf");
-            string OutputFile = Path.Combine(WorkingFolder, "CertificadoDonacion13.pdf");
+            string OutputFile = Path.Combine(WorkingFolder, "CertificadoDonacion" + donacion.IdEmpresa+".pdf");
 
             using (Stream input = new FileStream(InputFile, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
