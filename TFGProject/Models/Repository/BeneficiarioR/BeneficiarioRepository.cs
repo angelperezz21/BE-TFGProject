@@ -26,13 +26,13 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
             message.Subject = "Bienvenido a EasyDonation";
-            message.To.Add(new MailAddress("angelpermar20@gmail.com"));
+            message.To.Add(new MailAddress(beneficiario.Email));
             message.Body = "<html><body><h1>Bienvenido a nuestro sitio web</h1><p>Hola "
                 + beneficiario.Nombre +
                 ",</p><p>Gracias por registrarte en nuestro sitio web. Esperamos que disfrutes de nuestros servicios y te sientas como en casa.</p>" +
                 "<p>Tus credenciales de inicio de sesión son:</p><ul><li><strong>Email:</strong> "
                 + beneficiario.Email +
-                "</li><li><strong>Contraseña:</strong> " + beneficiario.Contrasenya +
+                "</li><li><strong>Contraseña:</strong> " + beneficiario.PasswordSinHash +
                 "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
             message.IsBodyHtml = true;
 

@@ -57,13 +57,13 @@ namespace TFGProject.Models.Repository.EmpresaR
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
             message.Subject = "Email de recuperación";
-            message.To.Add(new MailAddress("angelpermar20@gmail.com"));
+            message.To.Add(new MailAddress(empresa.Email));
             message.Body = "<html><body><h1>Email para recuperar tu contraseña</h1><p>Hola "
                 + empresa.Nombre +
                 ",</p><p>Has solcitado la recuperación de tu contraseña</p>" +
                 "<p>Tus credenciales de inicio de sesión son:</p><ul><li><strong>Email:</strong> "
                 + empresa.Email +
-                "</li><li><strong>Contraseña:</strong> " + empresa.Contrasenya +
+                "</li><li><strong>Contraseña:</strong> " + empresa.PasswordSinHash +
                 "</li></ul><p>Gracias,</p><p>El equipo de EasyDonation</p></body></html>";
             message.IsBodyHtml = true;
 
@@ -225,12 +225,18 @@ namespace TFGProject.Models.Repository.EmpresaR
 
         public bool ExisteEmpresa(string CIF)
         {
+
             EdgeOptions options = new EdgeOptions();
 
-            //options.AddArgument("--headless");
-            //options.AddArgument("--start-maximized");
+            options.AddArgument("--headless");
+            options.AddArgument("--disable-dev-shm-usage");
+            options.AddArgument("--start-maximized");
+            options.AddArgument("--no-sandbox");
 
-            EdgeDriver driver = new EdgeDriver(options);
+
+            var driverPath = Path.Combine(Directory.GetCurrentDirectory(), "ejecutable/", "msedge.exe");
+          
+            EdgeDriver driver = new EdgeDriver(driverPath,options);
 
 
             driver.Navigate().GoToUrl("https://sede.registradores.org/site/mercantil");
