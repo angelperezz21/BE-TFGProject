@@ -22,8 +22,8 @@ namespace TFGProject.Models.Repository.EmpresaR
 
         public void sendEmail(Empresa empresa)
         {
-            string fromMail = "easyDonatioORG@gmail.com";
-            string fromPassword = "zcybiotsmdqhoxds";
+            string fromMail = "easyDonationORG@gmail.com";
+            string fromPassword = "axvqbrdsmpctynkw";
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
@@ -51,8 +51,8 @@ namespace TFGProject.Models.Repository.EmpresaR
 
         public void sendEmailRecuperación(Empresa empresa)
         {
-            string fromMail = "easyDonatioORG@gmail.com";
-            string fromPassword = "zcybiotsmdqhoxds";
+            string fromMail = "easyDonationORG@gmail.com";
+            string fromPassword = "axvqbrdsmpctynkw";
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);

@@ -20,8 +20,8 @@ namespace TFGProject.Models.Repository.BeneficiarioR
 
         public void sendEmail(Beneficiario beneficiario)
         {
-            string fromMail = "easyDonatioORG@gmail.com";
-            string fromPassword = "zcybiotsmdqhoxds";
+            string fromMail = "easyDonationORG@gmail.com";
+            string fromPassword = "axvqbrdsmpctynkw";
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
@@ -48,8 +48,8 @@ namespace TFGProject.Models.Repository.BeneficiarioR
 
         public void sendEmailRecuperación(Beneficiario beneficiario)
         {
-            string fromMail = "easyDonatioORG@gmail.com";
-            string fromPassword = "zcybiotsmdqhoxds";
+            string fromMail = "easyDonationORG@gmail.com";
+            string fromPassword = "axvqbrdsmpctynkw";
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);

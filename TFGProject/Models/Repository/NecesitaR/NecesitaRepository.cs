@@ -111,8 +111,8 @@ namespace TFGProject.Models.Repository.NecesitaR
 
         public void sendSolicitarEmail(Empresa empresa, Beneficiario beneficiario)
         {
-            string fromMail = "easyDonatioORG@gmail.com";
-            string fromPassword = "zcybiotsmdqhoxds";
+            string fromMail = "easyDonationORG@gmail.com";
+            string fromPassword = "axvqbrdsmpctynkw";
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
@@ -137,8 +137,8 @@ namespace TFGProject.Models.Repository.NecesitaR
 
         public void sendAceptarEmail(Empresa empresa, Beneficiario beneficiario)
         {
-            string fromMail = "easyDonatioORG@gmail.com";
-            string fromPassword = "zcybiotsmdqhoxds";
+            string fromMail = "easyDonationORG@gmail.com";
+            string fromPassword = "axvqbrdsmpctynkw";
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
@@ -165,8 +165,8 @@ namespace TFGProject.Models.Repository.NecesitaR
 
         public void sendComunicarEB(Empresa empresa, Beneficiario beneficiario)
         {
-            string fromMail = "easyDonatioORG@gmail.com";
-            string fromPassword = "zcybiotsmdqhoxds";
+            string fromMail = "easyDonationORG@gmail.com";
+            string fromPassword = "axvqbrdsmpctynkw";
 
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
