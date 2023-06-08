@@ -1,4 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿//< Aplicación destinada a facilitar la colaboraciñón entre Empresas y ONGs>
+//  Copyright (C) < 2023 >  < Ángel Pérez Martín>
+
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Headers;
 using iTextSharp.text;
@@ -101,7 +116,7 @@ namespace TFGProject.Models.Repository.DonacionR
             // Agregar fecha de la donación
             Paragraph fechaDonacion = new Paragraph("Que la entidad " + donacion.Empresa.Nombre + " con CIF " + donacion.Empresa.CIF + 
                 " y " +
-                "domicilio en " + donacion.Empresa.Direccion+ " ha realizado, con fecha " + donacion.FechaDonacion.ToShortDateString() + 
+                "domicilio en " + donacion.Empresa.Direccion+ " ha realizado, con fecha " + donacion.FechaDonacion.ToString("dd/MM/yyyy") + 
                 " una aportación económica a esta Entidad, " + donacion.Beneficiario.Nombre +
                 ", CIF " + donacion.Beneficiario.CIF + " y domicilio en " + donacion.Beneficiario.Direccion + 
                 " que figura como entidad beneficiaria del mecenazgo en el artº 16.c de la Ley 49/2002, de 23 de diciembre, "
@@ -116,7 +131,7 @@ namespace TFGProject.Models.Repository.DonacionR
             // Agregar recurso donado
             Paragraph recursoDonado = new Paragraph("Y para que conste, a los efectos previstos en la Ley 49/2002, de 23 de diciembre,"+
                 " de régimen fiscal de las entidades sin fines lucrativos y de los incentivos fiscales al mecenazgo, " + 
-                "se expide el presente certificado en fecha " + donacion.FechaDonacion.ToShortDateString());
+                "se expide el presente certificado en fecha " + donacion.FechaDonacion.ToString("dd/MM/yyyy"));
             recursoDonado.SpacingAfter = 5f;
             recursoDonado.Alignment = Element.ALIGN_JUSTIFIED;
             doc.Add(recursoDonado);

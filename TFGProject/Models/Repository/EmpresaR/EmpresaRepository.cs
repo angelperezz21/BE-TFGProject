@@ -1,4 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿//< Aplicación destinada a facilitar la colaboraciñón entre Empresas y ONGs>
+//  Copyright (C) < 2023 >  < Ángel Pérez Martín>
+
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+using Microsoft.EntityFrameworkCore;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
@@ -227,34 +242,25 @@ namespace TFGProject.Models.Repository.EmpresaR
         {
 
             EdgeOptions options = new EdgeOptions();
-
             options.AddArgument("--headless");
             options.AddArgument("--disable-dev-shm-usage");
             options.AddArgument("--start-maximized");
             options.AddArgument("--no-sandbox");
 
-
             var driverPath = Path.Combine(Directory.GetCurrentDirectory(), "ejecutable/", "msedge.exe");
           
             EdgeDriver driver = new EdgeDriver(driverPath,options);
-
-
             driver.Navigate().GoToUrl("https://sede.registradores.org/site/mercantil");
 
             IWebElement cookies = driver.FindElement(By.Id("closeCookiesInfo"));
-
             cookies.Click();
 
             IWebElement botonBuscar = driver.FindElement(By.LinkText("Buscar por sociedad"));
-
             botonBuscar.Click();
 
 
             IWebElement divEliminar = driver.FindElement(By.Id("captcha-0"));
-
             driver.ExecuteScript("arguments[0].remove();", divEliminar);
-
-
             divEliminar = driver.FindElement(By.Id("ccode"));
             driver.ExecuteScript("arguments[0].remove();", divEliminar);
 
@@ -263,7 +269,6 @@ namespace TFGProject.Models.Repository.EmpresaR
             jsExecutor.ExecuteScript("arguments[0].checked = true;", radioButton);
 
             IWebElement boton = driver.FindElement(By.CssSelector("button[data-qa='buscarMercSubmit']"));
-
             IWebElement element = driver.FindElement(By.Id("terminoBusquedaMerc"));
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 

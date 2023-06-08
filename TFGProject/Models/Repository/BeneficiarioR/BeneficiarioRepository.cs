@@ -1,4 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿//< Aplicación destinada a facilitar la colaboraciñón entre Empresas y ONGs>
+//  Copyright (C) < 2023 >  < Ángel Pérez Martín>
+
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+using Microsoft.EntityFrameworkCore;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Edge;
 using System.Net;
@@ -236,26 +251,17 @@ namespace TFGProject.Models.Repository.BeneficiarioR
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
 
             js.ExecuteScript("arguments[0].value = 'Caritas';", campoEntrada);
-
-
-            //class=button-red-large button-centered
             IWebElement boton = driver.FindElement(By.CssSelector(".button-red-large.button-centered"));
-
             boton.Click();
 
             IWebElement tabla = driver.FindElement(By.CssSelector("tbody"));
-
-            // Encontrar la primera fila de la tabla
             IWebElement primeraFila = tabla.FindElement(By.CssSelector("tr"));
-
-            // Encontrar el enlace de la organización en la primera fila
             IWebElement enlaceOrganizacion = primeraFila.FindElement(By.CssSelector("td[data-label='Organización'] a"));
-
+            
             driver.Navigate().GoToUrl(enlaceOrganizacion.GetAttribute("href"));
-            // Obtener el texto del enlace para obtener el nombre de la primera organización
+
             IWebElement filaCif = driver.FindElement(By.XPath("//tr[th='Cif']"));
 
-            // Obtener el texto de la columna CIF
             string cif = filaCif.FindElement(By.XPath("td")).Text;
 
             driver.Close();
